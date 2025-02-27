@@ -3,7 +3,7 @@
      <div class="md:col-span-9 lg:col-span-9 col-span-12">
             <div class="bg-white shadow p-4 dark:bg-slate-900" style="border-radius: 10px 0px 0px 0px;">
               <h5 class="font-bold text-gray-700 dark:text-white">
-                        Giographic Information System
+                        Geographic Information System
               </h5>
            </div>
             <div class="bg-white shadow dark:bg-slate-900 z-10"  id="map" style="height: 508px; width: 100%;"></div>
@@ -18,7 +18,7 @@
                 
 
                 //google streets
-                var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}',{
+                var googleStreets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
                     maxZoom: 15,
                     minZoom: 7,  
                     subdomains:['mt0','mt1','mt2','mt3']
@@ -44,6 +44,8 @@
                     {
                         iconUrl = '/images/'+farm.animal_name+'.png';
                     }
+
+
                     var marker = L.marker([parseFloat(farm.latitude), parseFloat(farm.longitude)], {
                         icon: L.icon({
                             iconUrl: iconUrl,
@@ -51,8 +53,11 @@
                             iconAnchor: [12, 41],
                             popupAnchor: [1, -34]
                         })
-                    }).bindPopup(`<b>Farm Name:</b> ${farm.owner_firstname}`);
-
+                    })
+                    .bindPopup(`
+                    <table> <tr> <td style="width:40%">  <img class="mx-auto my-auto h-100 block rounded-full"  src="/images/five-farm-biosecurity-practices.jpg" alt="product image" /></tr> </table>
+                  `);
+                    
                     if(farm.animal_name == "Baboy")
                     {
                         baboyan.addLayer(marker);
@@ -93,7 +98,7 @@
                         color: 'red',       // Circle border color
                         fillColor: 'green', // Circle fill color
                         fillOpacity: 0.5,   // Circle fill opacity
-                        radius: 9000,       // Circle radius in meters
+                        radius: 100,       // Circle radius in meters
                         weight: 4,
                         opacity: 0.4
                     })
@@ -220,7 +225,7 @@
                             let currentIndexB = 0;
                             var geoJsonLayerB= L.geoJSON(geojsonData, {
                                 style: function (feature) {
-                                    return { color: "black", weight: 0.2,fillOpacity:0};
+                                    return { color: "white", weight: 1,fillOpacity:0.5,fillColor:"gray"};
                                 },
                                 onEachFeature: function (feature, layer) {
                                     if (feature.properties && feature.properties.Brgy) 
@@ -254,9 +259,10 @@
                                             layer.on('mouseover', function (e) {
                                                 // Highlight the polygon
                                                 e.target.setStyle({
-                                                    color: 'blue',
-                                                    weight: 1,
-                                                    fillOpacity: 0.5,
+                                                    color: 'white',
+                                                    weight: 5,
+                                                    fillOpacity: 0.4,
+                                                    fillColor:"black"
                                                 });
 
                                                 // Show details in a tooltip
@@ -300,7 +306,9 @@
                             }, 500); // Blink every 1 second
 
                             // Add the layer control to the map
-                            var layerControl = L.control.layers(overlayMaps, overLayBorders);
+                            var layerControl = L.control.layers(overlayMaps, overLayBorders,{
+                                collapsed:false
+                            });
                             layerControl.addTo(map);
 
                              document.getElementById('opacityInput').addEventListener('input', function (event) {
@@ -415,6 +423,20 @@
 </div>
 <div class="md:col-span-12 lg:col-span-12 col-span-12" style="margin-top: 0px;">
      <div class="bg-white p-4 dark:bg-slate-800">
+        
+
+
+
+<a href="#" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+    <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="/images/logo.png" alt="">
+    <div class="flex flex-col justify-between p-4 leading-normal">
+        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+    </div>
+</a>
+
+
+
         <div class="grid grid-cols-12">
             <div class="col-span-12">
                 <x-filament::page></x-filament::page>

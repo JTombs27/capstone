@@ -31,6 +31,8 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->sidebarCollapsibleOnDesktop(true)
+            ->sidebarWidth('250px')
             ->collapsibleNavigationGroups(false)
             ->navigationGroups([
                 'SERVICES',
@@ -47,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/logo.png'))
             ->brandLogo(asset('images/logo2.png'))
             ->brandLogoHeight('4rem')
+            ->breadcrumbs(false)
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 //Widgets\FilamentInfoWidget::class,

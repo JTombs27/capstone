@@ -25,21 +25,22 @@
 }
 
 
-.fi-sidebar-item-icon, .fi-sidebar-item-label {
+.fi-sidebar-item-icon,
+.fi-sidebar-item-label {
     @apply text-white;
     @apply dark:text-white;
 }
 
-.fi-sidebar-group-button > .fi-sidebar-group-label {
+.fi-sidebar-group-button>.fi-sidebar-group-label {
     @apply text-cyan-400;
     @apply dark:text-cyan-400;
 }
 
-.fi-sidebar-item.fi-active > .fi-sidebar-item-button {
+.fi-sidebar-item.fi-active>.fi-sidebar-item-button {
     @apply bg-gray-900/30;
 }
 
-.fi-sidebar-item-button:hover{
+.fi-sidebar-item-button:hover {
     @apply bg-blue-900/90;
 }
 
@@ -67,16 +68,15 @@
     @apply rounded-full;
 } */
 
-.fi-simple-main > .fi-simple-page > .grid > .fi-form > .fi-form-actions > .fi-ac > button{
+.fi-simple-main>.fi-simple-page>.grid>.fi-form>.fi-form-actions>.fi-ac>button {
     @apply bg-white;
     @apply text-gray-700;
     @apply rounded-full;
 }
 
-.fi-simple-main >  .fi-simple-page > .grid > .fi-simple-header > div,
-.fi-simple-main >  .fi-simple-page > .grid > .fi-simple-header > h1,
-.fi-simple-main >  .fi-simple-page > .grid > form > div > div > .fi-fo-field-wrp > div.grid > div.flex > .fi-fo-field-wrp-label > span
-{
+.fi-simple-main>.fi-simple-page>.grid>.fi-simple-header>div,
+.fi-simple-main>.fi-simple-page>.grid>.fi-simple-header>h1,
+.fi-simple-main>.fi-simple-page>.grid>form>div>div>.fi-fo-field-wrp>div.grid>div.flex>.fi-fo-field-wrp-label>span {
     @apply text-white;
 }
 
@@ -99,7 +99,7 @@
     /* @apply bg-gradient-to-t from-blue-800 to-red-700 ; */
 }
 
-.fi-ta{
+.fi-ta {
     /* @apply shadow-2xl;
     @apply dark:shadow-xl;
 
@@ -108,15 +108,14 @@
 
 
 }
+
 .fi-ta-table,
-.fi-ta-table > tbody,
-.fi-ta-table > thead
- {
+.fi-ta-table>tbody,
+.fi-ta-table>thead {
     @apply divide-white/5;
 }
 
-.fi-ta-row
-{
+.fi-ta-row {
     @apply hover:bg-white/5;
 }
 
@@ -142,93 +141,84 @@
     @apply dark:bg-gray-700/80;
 
 } */
- .fi-ta-table > thead > tr,
- .fi-pagination {
+.fi-ta-table>thead>tr,
+.fi-pagination {
     @apply dark:bg-sky-300/20;
     @apply bg-sky-300/20;
- }
+}
 
- .fi-ta-table > thead > tr > th {
+.fi-ta-table>thead>tr>th {
     @apply dark:text-sky-300;
- }
+}
 
- .fi-ta-header-cell-label {
+.fi-ta-header-cell-label {
     @apply dark:text-cyan-400;
     @apply text-cyan-400;
- }
+}
 
- .fi-ta-text-item-label {
+.fi-ta-text-item-label {
     @apply text-white;
- }
+}
 
- .fi-ta-actions > .fi-link > .fi-link-icon,
- .fi-ta-actions > .fi-link > span
- {
+.fi-ta-actions>.fi-link>.fi-link-icon,
+.fi-ta-actions>.fi-link>span {
     @apply text-custom-400;
- }
+}
 
- .fi-topbar > nav {
+.fi-topbar>nav {
     @apply dark:bg-custom-color-topnav;
     @apply bg-custom-color-topnav;
- }
+}
 
 
- /* pagination classes  */
- .fi-pagination-overview {
+/* pagination classes  */
+.fi-pagination-overview {
     @apply text-gray-200;
- }
+}
 
- .fi-pagination-records-per-page-select > .fi-input-wrp
- {
+.fi-pagination-records-per-page-select>.fi-input-wrp {
     @apply bg-white/5;
     @apply ring-white/20;
- }
+}
 
- .fi-pagination-items
- {
+.fi-pagination-items {
     @apply bg-white/5;
     @apply ring-white/20;
     @apply divide-white/10;
- }
+}
 
- .fi-pagination-item
- {
+.fi-pagination-item {
     @apply border-white/5
- }
+}
 
- .fi-pagination-item.fi-active > button > .fi-pagination-item-label
- {
+.fi-pagination-item.fi-active>button>.fi-pagination-item-label {
     @apply text-blue-400;
- }
+}
 
- .fi-pagination-item-button
- {
+.fi-pagination-item-button {
 
     @apply hover:bg-blue-600/10;
     @apply focus-visible:ring-primary-500;
     @apply bg-white/5;
 
- }
+}
 
- .fi-pagination-item-label
- {
+.fi-pagination-item-label {
     @apply text-gray-200;
- }
+}
 
-.fi-pagination-records-per-page-select > .fi-input-wrp
-{
+.fi-pagination-records-per-page-select>.fi-input-wrp {
     @apply bg-white/5;
     @apply ring-white/20;
     @apply [&:not(:has(.fi-ac-action:focus))]:focus-within:ring-primary-500;
 }
 
-.fi-pagination-records-per-page-select > .fi-input-wrp > div
-{
+.fi-pagination-records-per-page-select>.fi-input-wrp>div {
     @apply border-white/10;
 }
-.fi-pagination-records-per-page-select > .fi-input-wrp > div > .fi-input-wrp-label,
-.fi-pagination-records-per-page-select > .fi-input-wrp > div.flex-1 > .fi-select-input
-{
+
+.fi-pagination-records-per-page-select>.fi-input-wrp>div>.fi-input-wrp-label,
+.fi-pagination-records-per-page-select>.fi-input-wrp>div.flex-1>.fi-select-input {
     @apply text-gray-300;
 }
 
@@ -237,8 +227,7 @@
 
 /* badge classes */
 
-.fi-badge.fi-color-custom
-{
+.fi-badge.fi-color-custom {
     @apply bg-custom-400/10;
     @apply text-custom-400;
     @apply ring-custom-400/30;

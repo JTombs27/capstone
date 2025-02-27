@@ -28,9 +28,14 @@ class HelplineResource extends Resource
 
     protected static ?string $model = Helpline::class;
 
-    protected static ?string $navigationGroup = "SERVICES";
-    protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
-    protected static ?string $navigationLabel = "Animal Helpline";
+    protected static ?string $navigationGroup   = "SERVICES";
+    protected static ?string $navigationIcon    = 'heroicon-o-lifebuoy';
+    protected static ?string $navigationLabel   = "Animal Helpline";
+    protected static ?string $label             = "Animal Helpline";
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('status', "application")->count();
@@ -86,7 +91,15 @@ class HelplineResource extends Resource
                     ->label("Disease")
                     ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease'),
                 Tables\Columns\TextColumn::make('status')
+                    ->getStateUsing(
+                        fn($record) => ($record->latitude && $record->longitude) ? $record->status . '- Location Set' : $record->status . ' -Location Not Set'
+                    )
                     ->searchable(),
+                // Tables\Columns\TextColumn::make('location')
+                //     ->label('Location')
+                //     ->getStateUsing(
+                //         fn($record) => ($record->latitude && $record->longitude) ? 'Location Set' : 'Location Not Set'
+                //     ),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

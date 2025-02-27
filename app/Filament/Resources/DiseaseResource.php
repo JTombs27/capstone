@@ -90,7 +90,7 @@ class DiseaseResource extends Resource
                 //
                 SelectFilter::make("animal_id")
                     ->label("Filter By Animals")
-                    ->options(Animal::all()->pluck('animal_name', 'id'))
+                    ->options(Animal::whereNot("animal_name", "All")->pluck('animal_name', 'id'))
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

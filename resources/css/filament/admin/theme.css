@@ -31,17 +31,34 @@
     }
 }
 
-.fi-sidebar,
-.fi-sidebar-header {
+.fi-layout {
+
+    /* @apply dark:bg-gradient-to-br dark:from-yellow-950/90 from-30% dark:via-yellow-800/80 dark:to-yellow-500/100 dark:to-60%;
+    @apply bg-gradient-to-br from-yellow-500/90 from-30% via-yellow-800/80 to-yellow-950/100 to-60%; */
+    @apply bg-white;
+    @apply dark:bg-gray-600;
+
+}
+
+/* .fi-sidebar-header, */
+.fi-sidebar {
     /* background: white;
     border-right: 1px solid #E4E4E5; */
 
     /* @apply dark:bg-gradient-to-b from-blue-800  to-red-700;
     @apply bg-gradient-to-t from-blue-800 to-red-700 ; */
 
-    @apply bg-custom-color-sidebar;
-    @apply dark:bg-custom-color-sidebar-dark;
+    /* @apply bg-custom-color-sidebar; */
+    @apply bg-slate-800;
+    @apply dark:bg-slate-800;
 }
+
+.fi-sidebar-header,
+.fi-topbar>nav {
+    @apply dark:bg-slate-900;
+    @apply bg-blue-950;
+}
+
 
 .fi-body {
     @apply bg-gray-950
@@ -71,39 +88,23 @@
     @apply bg-blue-900/90;
 }
 
-/* .fi-fieldset
-{
-    @apply dark:bg-custom-color-sidebar-dark;
-    @apply bg-custom-color-sidebar;
-} */
+.fi-sidebar-nav {
+    @apply py-6;
+}
 
 ul.fi-sidebar-nav-groups {
     @apply gap-3;
 }
 
-/* .dark .fi-sidebar {
-   background: #18181B !important;
-   border-right: 1px solid #2F2F31;
-} */
-
 .fi-simple-layout {
-    /* @apply bg-blue-600/90; */
-    /* background-image: url('/public/images/bg.jpg'); */
     @apply bg-gradient-to-r from-blue-800 to-red-500;
 }
 
 .fi-simple-main {
-    /* @apply dark:bg-gradient-to-r from-blue-800 from-40% to-red-500 to-20%; */
-    @apply bg-gray-950/10;
-    @apply dark:bg-gray-950/10;
+    @apply bg-blue-950/10;
+    @apply dark:bg-blue-950/10;
     @apply shadow-2xl;
 }
-
-/* .fi-simple-main > .fi-simple-page > .grid > .fi-form > .fi-form-actions > .fi-ac > button{
-    @apply bg-white;
-    @apply text-gray-700;
-    @apply rounded-full;
-} */
 
 .fi-simple-main>.fi-simple-page>.grid>.fi-form>.fi-form-actions>.fi-ac>button {
     @apply bg-white;
@@ -118,68 +119,50 @@ ul.fi-sidebar-nav-groups {
 }
 
 .fi-header-heading {
-    @apply text-white;
-    /* @apply dark:text-blue-600; */
-    @apply uppercase;
+    @apply text-gray-600;
+    /* @apply uppercase; */
 
 }
 
-.fi-layout {
-
-    /* @apply dark:bg-gradient-to-br dark:from-yellow-950/90 from-30% dark:via-yellow-800/80 dark:to-yellow-500/100 dark:to-60%;
-    @apply bg-gradient-to-br from-yellow-500/90 from-30% via-yellow-800/80 to-yellow-950/100 to-60%; */
-    @apply bg-cyan-600;
-    @apply dark:bg-cyan-800;
-
-}
-
-.fi-ta {
-    /* @apply shadow-2xl;
-    @apply dark:shadow-xl;
-
-    @apply dark:shadow-gray-700;
-    @apply shadow-gray-800; */
 
 
-}
+.fi-ta {}
 
 .fi-ta-table,
 .fi-ta-table>tbody,
 .fi-ta-table>thead {
-    @apply divide-white/5;
+    /* @apply divide-white/5; */
 }
 
 .fi-ta-row {
-    @apply hover:bg-white/5;
+    /* @apply hover:bg-white/5; */
 }
 
 .fi-ta-ctn {
-    @apply dark:bg-transparent;
+    /* @apply dark:bg-transparent;
     @apply bg-transparent;
     @apply dark:ring-0;
     @apply ring-0;
-    @apply divide-white/5;
+    @apply divide-white/5; */
 
 }
 
 .fi-ta-header-ctn {
-    @apply bg-gray-700/80;
+    /* @apply bg-gray-700/80;
     @apply dark:bg-transparent;
     @apply bg-transparent;
-    @apply outline-none;
+    @apply outline-none; */
 
 
 }
 
-/* .fi-ta-header-cell {
-    @apply dark:bg-gray-700/80;
-
-} */
 .fi-ta-table>thead>tr,
 .fi-pagination {
     @apply dark:bg-sky-300/20;
     @apply bg-sky-300/20;
 }
+
+/* 
 
 .fi-ta-table>thead>tr>th {
     @apply dark:text-sky-300;
@@ -197,13 +180,7 @@ ul.fi-sidebar-nav-groups {
 .fi-ta-actions>.fi-link>.fi-link-icon,
 .fi-ta-actions>.fi-link>span {
     @apply text-custom-400;
-}
-
-.fi-topbar>nav {
-    @apply dark:bg-custom-color-topnav-dark;
-    @apply bg-custom-color-topnav;
-}
-
+} */
 
 /* pagination classes  */
 .fi-pagination-overview {
@@ -266,13 +243,3 @@ ul.fi-sidebar-nav-groups {
     @apply text-custom-400;
     @apply ring-custom-400/30;
 }
-
-
-
-/* .fi-ta-search-field > .fi-input-wrp {
-    @apply dark:bg-white;
-}
-
-.fi-ta-search-field > .fi-input-wrp > div > .fi-input {
-    @apply dark:text-gray-700;
-} */
