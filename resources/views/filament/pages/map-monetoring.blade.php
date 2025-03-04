@@ -1,12 +1,12 @@
 
 <div class="grid grid-cols-12 mt-5">
      <div class="md:col-span-9 lg:col-span-9 col-span-12">
-            <div class="bg-white shadow p-4 dark:bg-slate-900" style="border-radius: 10px 0px 0px 0px;">
-              <h5 class="font-bold text-gray-700 dark:text-white">
+            <div class="shadow p-4 bg-slate-900" style="border-radius: 10px 0px 0px 0px;">
+              <h5 class="font-bold text-gray-700 text-white">
                         Geographic Information System
               </h5>
            </div>
-            <div class="bg-white shadow dark:bg-slate-900 z-10"  id="map" style="height: 508px; width: 100%;"></div>
+            <div class="shadow bg-slate-900 z-10"  id="map" style="height: 508px; width: 100%;"></div>
         <!-- Leaflet CSS -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <!-- Leaflet JS -->
@@ -347,10 +347,10 @@
         </script>
 </div>
 <div class="md:col-span-3 lg:col-span-3 col-span-12 ">
-    <div class="bg-white p-4 dark:bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
-        <label class="font-bold text-center text-gray-700 dark:text-white col-span-8">Map Settings</label>
+    <div class=" p-4 bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
+        <label class="font-bold text-center text-gray-700 text-white col-span-8">Map Settings</label>
     </div>
-    <div class="bg-white pl-3 pr-3 pb-2 dark:bg-slate-900 h-[508px]"> 
+    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[508px]"> 
         <div class="grid grid-cols-12 gap-y-3">
              <div class="col-span-full grid grid-cols-12 border rounded p-3">
                 <div class="col-span-4 container my-auto">
@@ -368,7 +368,7 @@
              <hr class="col-span-12">
             <label class="col-span-12 text-sm text-bold">Municipality</label>
             <label class="container col-span-7 my-auto text-sm">Map Opacity:</label>
-            <input type="number" class="col-span-5 text-black rounded-lg border text-xs" id="opacityInput" value="0" placeholder="Enter opacity (0-1)" min="0" max="1" step="0.1">
+            <input type="number" class="col-span-5 rounded-lg text-black border text-xs" id="opacityInput" value="0" placeholder="Enter opacity (0-1)" min="0" max="1" step="0.1">
             <hr class="col-span-12">
             <label class="col-span-12">Indicators</label>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class=" container my-auto size-6 fill-farm-marker stroke-slate-50 col-span-3">
@@ -422,21 +422,7 @@
     </div>
 </div>
 <div class="md:col-span-12 lg:col-span-12 col-span-12" style="margin-top: 0px;">
-     <div class="bg-white p-4 dark:bg-slate-800">
-        
-
-
-
-<a href="#" class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-    <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="/images/logo.png" alt="">
-    <div class="flex flex-col justify-between p-4 leading-normal">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-    </div>
-</a>
-
-
-
+     <div class=" p-4 bg-slate-800">
         <div class="grid grid-cols-12">
             <div class="col-span-12">
                 <x-filament::page></x-filament::page>

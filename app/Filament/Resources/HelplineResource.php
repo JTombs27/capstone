@@ -86,10 +86,12 @@ class HelplineResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('animal.animal_name'),
+                Tables\Columns\TextColumn::make('animal.animal_name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('disease.disease_description')
                     ->label("Disease")
-                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease'),
+                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->getStateUsing(
                         fn($record) => ($record->latitude && $record->longitude) ? $record->status . '- Location Set' : $record->status . ' -Location Not Set'
@@ -109,6 +111,7 @@ class HelplineResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+
             ->filters([
                 //
             ])
@@ -116,6 +119,11 @@ class HelplineResource extends Resource
                 ActionGroup::make([
                     // Tables\Actions\EditAction::make(),
                     Tables\Actions\ViewAction::make()
+                        // ->form([
+                        //     TextInput::make('status')
+                        //         ->required()
+                        //         ->maxLength(255),
+                        // ])
                         ->slideOver(),
                     Tables\Actions\DeleteAction::make(),
                     Action::make("set_location")
@@ -124,26 +132,12 @@ class HelplineResource extends Resource
                             [
                                 Section::make("")
                                     ->schema([
-                                        // TextInput::make('latitude')
-                                        //     ->label("Latitude:")
-                                        //     ->reactive()
-                                        //     ->readOnly()
-                                        //     ->columnSpan(6),
-                                        // TextInput::make('longitude')
-                                        //     ->label("Longitude:")
-                                        //     ->reactive()
-                                        //     ->readOnly()
-                                        //     ->columnSpan(6),
+
                                         Map::make('location')
                                             ->label('Location')
                                             ->columnSpan(12)
                                             ->defaultLocation(latitude: 7.6038, longitude: 125.9632)
-                                            ->afterStateUpdated(function (Set $set, ?array $state) {
-                                                // if ($state) {
-                                                //     $set('latitude',  $state['lat']);
-                                                //     $set('longitude', $state['lng']);
-                                                // }
-                                            })
+                                            ->afterStateUpdated(function (Set $set, ?array $state) {})
                                             ->afterStateHydrated(function ($state, $record, Set $set, $livewire): void {
                                                 $set('location', ['lat' => $record?->latitude, 'lng' => $record?->longitude]);
 
@@ -256,12 +250,13 @@ class HelplineResource extends Resource
                 ])
                     ->icon("heroicon-s-cog-6-tooth")
 
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
+        // ->bulkActions([
+        //     Tables\Actions\BulkActionGroup::make([
+        //         Tables\Actions\DeleteBulkAction::make(),
+        //     ]),
+        // ]);
     }
 
     public static function getRelations(): array

@@ -117,6 +117,7 @@
 
 .fi-ta-row {
     @apply hover:bg-white/5;
+    @apply dark:bg-white/5;
 }
 
 .fi-ta-ctn {
