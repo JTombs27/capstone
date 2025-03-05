@@ -54,6 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 //Widgets\FilamentInfoWidget::class,
             ])
+            ->maxContentWidth('full')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

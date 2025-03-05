@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Barangay;
 use MunicipalitiesTableSeeder;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(
+            [
+                BarangaysTableSeeder::class,
+                Municipalities::class
+            ]
+        );
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

@@ -52,7 +52,16 @@
     @apply bg-slate-800;
     @apply dark:bg-slate-800;
 }
-
+.fi-sidebar-item-active svg > path{
+    @apply fill-yellow-800 !important;
+    @apply stroke-yellow-500 !important;
+  
+}
+.fi-sidebar-item-active > a{
+    @apply border-yellow-500 !important;
+    @apply border !important;
+    @apply bg-slate-900 !important;
+}
 .fi-sidebar-header,
 .fi-topbar>nav {
     @apply dark:bg-slate-900;

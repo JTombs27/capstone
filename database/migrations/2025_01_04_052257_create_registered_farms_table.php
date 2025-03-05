@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('registered_farms', function (Blueprint $table) {
             $table->id();
             $table->string('owner_firstname');
-            $table->string('owner_middle');
+            $table->string('owner_middle')->nullable();
             $table->string('owner_lastname');
-            $table->string('owner_suffix');
+            $table->string('owner_suffix')->nullable();
 
             $table->string('farm_municipality');
             $table->string('farm_barangay');
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->double('longitude')->nullable();
             $table->json('location')->nullable();
             $table->string('farm_type');
-            $table->string('farm_status');
+            $table->string('farm_status')->nullable();
             $table->timestamps();
         });
     }

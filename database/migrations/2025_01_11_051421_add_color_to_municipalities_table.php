@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('municipalities', function (Blueprint $table) {
             //
-            $table->string('color')->nullable()->after('municipality_name');
+            //$table->string('color')->nullable()->after('municipality_name');
         });
     }
 
