@@ -117,105 +117,105 @@
                      "Manokan": manokan
                 };
 
-                var municipalities = @json($this->getMunicipalities());
+                // var municipalities = @json($this->getMunicipalities());
                 
-                var geoJsonLayerMunicipality;
-                var currentOpacity = document.getElementById('opacityInput').value;
-                fetch('/geoJSON/MunicipalBoundary.json')
-                        .then(response => response.json())
-                        .then(geojsonData => {
-                            const blinkingBarangay = "Casoon"; 
-                            let currentIndex = 0;
-                            const Municipalcolors = ["red","transparent"];
-                            geoJsonLayerMunicipality = L.geoJSON(geojsonData, {
-                                style: function (feature) 
-                                {
-                                    var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
-                                    var color = municipality ? municipality.color : 'orange';
+                // var geoJsonLayerMunicipality;
+                // var currentOpacity = 1;//document.getElementById('opacityInput').value;
+                // fetch('/geoJSON/MunicipalBoundary.json')
+                //         .then(response => response.json())
+                //         .then(geojsonData => {
+                //             const blinkingBarangay = "Casoon"; 
+                //             let currentIndex = 0;
+                //             const Municipalcolors = ["red","transparent"];
+                //             geoJsonLayerMunicipality = L.geoJSON(geojsonData, {
+                //                 style: function (feature) 
+                //                 {
+                //                     var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
+                //                     var color = municipality ? municipality.color : 'orange';
                                      
-                                    return { color: color,stroke:true, weight: 2, fillOpacity:currentOpacity, opacity:1};
-                                },
-                                onEachFeature: function (feature, layer) {
-                                    if (feature.properties && feature.properties.MUN) 
-                                    {
+                //                     return { color: color,stroke:true, weight: 2, fillOpacity:currentOpacity, opacity:1};
+                //                 },
+                //                 onEachFeature: function (feature, layer) {
+                //                     if (feature.properties && feature.properties.MUN) 
+                //                     {
                                        
-                                        if(feature.properties.MUN.toLowerCase() == "new bataan")
-                                        {
-                                            layer.blink = true;
+                //                         if(feature.properties.MUN.toLowerCase() == "new bataan")
+                //                         {
+                //                             layer.blink = true;
                                             
-                                        }
+                //                         }
 
-                                        layer.bindPopup("Name: " + feature.properties.MUN,{
-                                                    permanent: false,
-                                                    direction: 'top',
-                                                });
-                                        // Handle click on the polygon
-                                            layer.on('dblclick', function (e) {
-                                                // Get the clicked coordinates
-                                                const clickedCoordinates = e.latlng;
+                //                         layer.bindPopup("Name: " + feature.properties.MUN,{
+                //                                     permanent: false,
+                //                                     direction: 'top',
+                //                                 });
+                //                         // Handle click on the polygon
+                //                             layer.on('dblclick', function (e) {
+                //                                 // Get the clicked coordinates
+                //                                 const clickedCoordinates = e.latlng;
 
-                                                // Trigger the map's click handler manually
-                                                map.fire('dblclick', {
-                                                    latlng: clickedCoordinates,
-                                                    layerPoint: e.layerPoint,
-                                                    containerPoint: e.containerPoint,
-                                                    originalEvent: e.originalEvent
-                                                });
+                //                                 // Trigger the map's click handler manually
+                //                                 map.fire('dblclick', {
+                //                                     latlng: clickedCoordinates,
+                //                                     layerPoint: e.layerPoint,
+                //                                     containerPoint: e.containerPoint,
+                //                                     originalEvent: e.originalEvent
+                //                                 });
 
-                                                // Optional: Prevent propagation to other events
-                                                L.DomEvent.stopPropagation(e);
-                                            });
+                //                                 // Optional: Prevent propagation to other events
+                //                                 L.DomEvent.stopPropagation(e);
+                //                             });
 
-                                           // Mouseover event: Highlight the polygon and show details
-                                            layer.on('mouseover', function (e) {
-                                                // Highlight the polygon
-                                                e.target.setStyle({
-                                                    color: 'blue',
-                                                    weight: 1,
-                                                    fillOpacity: 0.5,
-                                                });
+                //                            // Mouseover event: Highlight the polygon and show details
+                //                             layer.on('mouseover', function (e) {
+                //                                 // Highlight the polygon
+                //                                 e.target.setStyle({
+                //                                     color: 'blue',
+                //                                     weight: 1,
+                //                                     fillOpacity: 0.5,
+                //                                 });
 
-                                                // Show details in a tooltip
-                                                layer.bindTooltip("Municipality: " + feature.properties.MUN, {
-                                                    permanent: false,
-                                                    direction: 'top',
-                                                }).openTooltip(e.latlng);
+                //                                 // Show details in a tooltip
+                //                                 layer.bindTooltip("Municipality: " + feature.properties.MUN, {
+                //                                     permanent: false,
+                //                                     direction: 'top',
+                //                                 }).openTooltip(e.latlng);
 
-                                            });
+                //                             });
 
-                                            // Mouseout event: Reset the style and remove details
-                                            layer.on('mouseout', function (e) {
-                                                // Reset the style to default
-                                                geoJsonLayerMunicipality.resetStyle(e.target);
+                //                             // Mouseout event: Reset the style and remove details
+                //                             layer.on('mouseout', function (e) {
+                //                                 // Reset the style to default
+                //                                 geoJsonLayerMunicipality.resetStyle(e.target);
 
-                                                // Remove the tooltip
-                                                e.target.closeTooltip();
-                                            });
-                                    }
-                                }
-                            }) //.addTo(map);
+                //                                 // Remove the tooltip
+                //                                 e.target.closeTooltip();
+                //                             });
+                //                     }
+                //                 }
+                //             }) //.addTo(map);
 
-                             // Set up the blinking effect
-                            setInterval(() => {
-                                currentIndex = (currentIndex + 1) % Municipalcolors.length;
+                //              // Set up the blinking effect
+                //             setInterval(() => {
+                //                 currentIndex = (currentIndex + 1) % Municipalcolors.length;
 
-                                geoJsonLayerMunicipality.eachLayer(layer => {
-                                    // Check if this layer should blink
-                                    if (layer.blink) {
-                                        layer.setStyle({
-                                            fillColor: Municipalcolors[currentIndex],
-                                            fillOpacity:1,
-                                            stroke:true,
-                                            opacity:1,
-                                            color:"red"
-                                        });
-                                    }
-                                });
-                            }, 500); // Blink every 1 second
-                        })
-                        .catch(error => {
-                            console.error("Error loading GeoJSON:", error);
-                        });
+                //                 geoJsonLayerMunicipality.eachLayer(layer => {
+                //                     // Check if this layer should blink
+                //                     if (layer.blink) {
+                //                         layer.setStyle({
+                //                             fillColor: Municipalcolors[currentIndex],
+                //                             fillOpacity:1,
+                //                             stroke:true,
+                //                             opacity:1,
+                //                             color:"red"
+                //                         });
+                //                     }
+                //                 });
+                //             }, 500); // Blink every 1 second
+                //         })
+                //         .catch(error => {
+                //             console.error("Error loading GeoJSON:", error);
+                //         });
 
                         fetch('/geoJSON/BarangayBoundary.json')
                         .then(response => response.json())
@@ -286,7 +286,7 @@
                             });
 
                             var overLayBorders = {
-                                "Municipalities":geoJsonLayerMunicipality,
+                                //"Municipalities":geoJsonLayerMunicipality,
                                 "Barangays": geoJsonLayerB,
                             };
 
@@ -316,12 +316,12 @@
                                         const opacityValue = parseFloat(this.value); // Get the value from the input field
                                         if (!isNaN(opacityValue) && opacityValue >= 0 && opacityValue <= 1) {
                                             currentOpacity = opacityValue; // Update the current opacity
-                                            geoJsonLayerMunicipality.eachLayer(layer => {
-                                                // Apply the new opacity to all layers
-                                                layer.setStyle({
-                                                    fillOpacity: currentOpacity
-                                                });
-                                            });
+                                            // geoJsonLayerMunicipality.eachLayer(layer => {
+                                            //     // Apply the new opacity to all layers
+                                            //     layer.setStyle({
+                                            //         fillOpacity: currentOpacity
+                                            //     });
+                                            // });
                                             console.log("Updated fillOpacity to:", currentOpacity); // Log the new opacity value
                                         } else {
                                             
@@ -350,7 +350,157 @@
     <div class=" p-4 bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
         <label class="font-bold text-center text-gray-700 text-white col-span-8">Map Settings</label>
     </div>
-    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[508px]"> 
+    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[158px]">
+         <label class="col-span-12 text-sm text-bold">ASF MAP ZONING</label>
+         <hr>
+         <div class="grid grid-cols-12 gap-y-3">
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="blinking-svg size-6 mt-2 container my-auto size-6 fill-marker-danger stroke-marker-danger col-span-1">
+                <path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd" />
+            </svg>
+            <label class="col-span-2 text-sm container my-auto">Red</label>
+            <label class="col-span-1 text-sm container my-auto">=</label>
+            <label class="col-span-8 text-sm container my-auto">Infected Zone.</label>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="blinking-svg-pink size-6  container my-auto size-6 fill-marker-warnig stroke-marker-warnig col-span-1">
+                <path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd" />
+            </svg>
+            <label class="col-span-2 text-sm container my-auto">Pink </label>
+            <label class="col-span-1 text-sm container my-auto">=</label>
+            <label class="col-span-8 text-sm container my-auto">Buffer zone (ASF Free).</label>
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="blinking-svg-yellow size-6  container my-auto size-6 fill-marker-warnig stroke-marker-warnig col-span-1">
+                <path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd" />
+            </svg>
+            <label class="col-span-2 text-sm container my-auto">Yellow</label>
+            <label class="col-span-1 text-sm container my-auto">=</label>
+            <label class="col-span-8 text-sm container my-auto">Surviellance zone (ASF Free).</label>
+         </div>
+        
+    </div>
+    <div class="shadow bg-slate-900 z-10"  id="map2" style="height: 350px; width: 100%;"></div>
+     <script>
+            document.addEventListener('DOMContentLoaded', function () 
+            {
+                
+
+                //google streets
+                var googleStreets2 = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}',{
+                    maxZoom: 15,
+                    minZoom: 7,  
+                    subdomains:['mt0','mt1','mt2','mt3']
+                });
+
+                var map2 = L.map('map2', {
+                    center: [7.5547,126.1404],
+                    zoom: 9,
+                    layers: [googleStreets2]
+                });
+                var municipalities = @json($this->getMunicipalities());
+                
+                var geoJsonLayerMunicipality;
+                var currentOpacity = 1;//document.getElementById('opacityInput').value;
+                fetch('/geoJSON/MunicipalBoundary.json')
+                        .then(response => response.json())
+                        .then(geojsonData => {
+                            const blinkingBarangay = "Casoon"; 
+                            let currentIndex = 0;
+                            const Municipalcolors = ["red","transparent"];
+                            geoJsonLayerMunicipality = L.geoJSON(geojsonData, {
+                                style: function (feature) 
+                                {
+                                    var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
+                                    var color = municipality ? municipality.color : 'orange';
+                                     
+                                    return { color: 'white',
+                                        stroke:true, 
+                                        weight: 2, 
+                                        fillOpacity:currentOpacity,
+                                        fillColor:color,
+                                         fillOpacity:0.8};
+                                },
+                                onEachFeature: function (feature, layer) {
+                                    if (feature.properties && feature.properties.MUN) 
+                                    {
+                                       
+                                        if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
+                                        {
+                                            layer.blink = true;
+                                            
+                                        }
+
+                                        layer.bindPopup("Name: " + feature.properties.MUN,{
+                                                    permanent: false,
+                                                    direction: 'top',
+                                                });
+                                        // Handle click on the polygon
+                                            layer.on('dblclick', function (e) {
+                                                // Get the clicked coordinates
+                                                const clickedCoordinates = e.latlng;
+
+                                                // Trigger the map's click handler manually
+                                                map.fire('dblclick', {
+                                                    latlng: clickedCoordinates,
+                                                    layerPoint: e.layerPoint,
+                                                    containerPoint: e.containerPoint,
+                                                    originalEvent: e.originalEvent
+                                                });
+
+                                                // Optional: Prevent propagation to other events
+                                                L.DomEvent.stopPropagation(e);
+                                            });
+
+                                           // Mouseover event: Highlight the polygon and show details
+                                            layer.on('mouseover', function (e) {
+                                                // Highlight the polygon
+                                                e.target.setStyle({
+                                                    color: 'blue',
+                                                    weight: 1,
+                                                    fillOpacity: 0.5,
+                                                });
+
+                                                // Show details in a tooltip
+                                                layer.bindTooltip("Municipality: " + feature.properties.MUN, {
+                                                    permanent: false,
+                                                    direction: 'top',
+                                                }).openTooltip(e.latlng);
+
+                                            });
+
+                                            // Mouseout event: Reset the style and remove details
+                                            layer.on('mouseout', function (e) {
+                                                // Reset the style to default
+                                                geoJsonLayerMunicipality.resetStyle(e.target);
+
+                                                // Remove the tooltip
+                                                e.target.closeTooltip();
+                                            });
+                                    }
+                                }
+                            }).addTo(map2);
+
+                             // Set up the blinking effect
+                            setInterval(() => {
+                                currentIndex = (currentIndex + 1) % Municipalcolors.length;
+
+                                geoJsonLayerMunicipality.eachLayer(layer => {
+                                    // Check if this layer should blink
+                                    if (layer.blink) {
+                                        layer.setStyle({
+                                            fillColor: Municipalcolors[currentIndex],
+                                            fillOpacity:1,
+                                            stroke:true,
+                                            opacity:1,
+                                            color:"red"
+                                        });
+                                    }
+                                });
+                            }, 500); // Blink every 1 second
+                        })
+                        .catch(error => {
+                            console.error("Error loading GeoJSON:", error);
+                        });
+                       
+            });
+</script>
+    {{-- <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[508px]"> 
         <div class="grid grid-cols-12 gap-y-3">
              <div class="col-span-full grid grid-cols-12 border rounded p-3">
                 <div class="col-span-4 container my-auto">
@@ -419,7 +569,7 @@
         </div>
         {{-- dark:bg-cyan-300 --}}
         {{-- <x-filament::page></x-filament::page> --}}
-    </div>
+   {{-- </div> --}}
 </div>
 <div class="md:col-span-12 lg:col-span-12 col-span-12" style="margin-top: 0px;">
      <div class=" p-4 bg-slate-800">

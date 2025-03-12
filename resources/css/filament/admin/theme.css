@@ -13,6 +13,14 @@
     animation: blinkRed 0.5s infinite alternate;
 }
 
+.blinking-svg-pink {
+    animation: blinkPink 0.5s infinite alternate;
+}
+
+.blinking-svg-yellow {
+    animation: blinkYellow 0.5s infinite alternate;
+}
+
 /* Keyframe animation to blink color */
 @keyframes blinkRed {
     0% {
@@ -27,6 +35,42 @@
 
     100% {
         fill: red;
+        /* End with red */
+    }
+}
+
+/* Keyframe animation to blink color */
+@keyframes blinkPink {
+    0% {
+        fill: pink;
+        /* Start with red */
+    }
+
+    50% {
+        fill: currentColor;
+        /* Back to the original color */
+    }
+
+    100% {
+        fill: pink;
+        /* End with red */
+    }
+}
+
+/* Keyframe animation to blink color */
+@keyframes blinkYellow {
+    0% {
+        fill: yellow;
+        /* Start with red */
+    }
+
+    50% {
+        fill: currentColor;
+        /* Back to the original color */
+    }
+
+    100% {
+        fill: yellow;
         /* End with red */
     }
 }

@@ -200,7 +200,7 @@ class HelplineResource extends Resource
                                                     ->options(fn($get) =>  Symptom::where('animal_id', $get('animal_id'))->get()->pluck('symptom_descr', 'id'))
                                                     ->gridDirection('row')
                                                     ->afterStateHydrated(function ($component, $state, $record) {
-                                                        if (! filled($state)) {
+                                                        if ($record != null) {
                                                             $component->state(DB::table('helpline_symptoms')
                                                                 ->join('symptoms', 'symptoms.id', '=', 'helpline_symptoms.symptom_id')
                                                                 ->where('helpline_symptoms.helpline_id', $record->id)
@@ -224,6 +224,7 @@ class HelplineResource extends Resource
                                             ->rows(3)
                                             ->columnspan(12),
                                         FileUpload::make('image_path')
+                                            ->label("Sample Images")
                                             ->multiple()
                                             ->maxParallelUploads(1)
                                             ->columnspan(12),
@@ -421,7 +422,7 @@ class HelplineResource extends Resource
                                                         ->numeric()
                                                         ->maxLength(255)
                                                         ->columnSpan(4),
-                                                    Section::make('List Of Symptoms')
+                                                    Section::make('Reported Symptoms')
                                                         ->schema([
                                                             Forms\Components\CheckboxList::make('diseasesymptoms')
                                                                 ->label("")
@@ -459,6 +460,7 @@ class HelplineResource extends Resource
                                                         ->rows(3)
                                                         ->columnspan(12),
                                                     FileUpload::make('image_path')
+                                                        ->label("Sample Images")
                                                         ->multiple()
                                                         ->maxParallelUploads(1)
                                                         ->columnspan(12),
