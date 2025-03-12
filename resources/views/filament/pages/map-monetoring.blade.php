@@ -381,7 +381,7 @@
             {
                 
 
-                //google streets
+                //google streets 'http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}' 
                 var googleStreets2 = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}',{
                     maxZoom: 15,
                     minZoom: 7,  
