@@ -1,6 +1,6 @@
 
 <div class="grid grid-cols-12 mt-5">
-     <div class="md:col-span-9 lg:col-span-9 col-span-12">
+     <div class="md:col-span-8 lg:col-span-8 col-span-12">
             <div class="shadow p-4 bg-slate-900" style="border-radius: 10px 0px 0px 0px;">
               <h5 class="font-bold text-gray-700 text-white">
                         Geographic Information System
@@ -346,7 +346,7 @@
         
         </script>
 </div>
-<div class="md:col-span-3 lg:col-span-3 col-span-12 ">
+<div class="md:col-span-4 lg:col-span-4 col-span-12 ">
     <div class=" p-4 bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
         <label class="font-bold text-center text-gray-700 text-white col-span-8">Map Settings</label>
     </div>

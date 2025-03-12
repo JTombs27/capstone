@@ -9,6 +9,21 @@ class Helpline extends Model
 {
     use HasFactory;
     protected $guarded  = [];
+    protected $casts = [
+        'location' => 'json',
+        'image_path' => 'json',
+    ];
+
+    protected static function booted()
+    {
+        static::saving(function ($model) {
+            if (is_array($model->location)) {
+                $model->latitude = $model->location["lat"];
+                $model->longitude = $model->location["lng"];
+                $model->location = json_encode($model->location);
+            }
+        });
+    }
 
     public function animal()
     {
@@ -18,5 +33,10 @@ class Helpline extends Model
     public function disease()
     {
         return $this->belongsTo(Disease::class, "disease_id", "id");
+    }
+
+    public function helplineSymptoms()
+    {
+        return $this->hasMany(HelplineSymptom::class, "helpline_id", "id");
     }
 }

@@ -11,7 +11,10 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\DiseaseResource\Pages;
@@ -34,8 +37,10 @@ class DiseaseResource extends Resource
                 Section::make("Disease Information")
                     ->schema([
                         Forms\Components\Checkbox::make("contigouse")
+                            ->id("disease-checkbox")
                             ->label("Contigouse Disease?")
-                            ->columnspan(12),
+                            ->inline(false)
+                            ->columnspan(2),
                         Forms\Components\Select::make('animal_id')
                             ->label("Select Animal")
                             ->options(Animal::where("animal_name", "!=", "All")->pluck('animal_name', 'id'))
@@ -44,11 +49,25 @@ class DiseaseResource extends Resource
                             ->reactive() // Trigger updates when this field changes
                             ->afterStateUpdated(fn(callable $set) => $set('diseasesymptoms', []))
                             ->required()
-                            ->columnspan(5),
+                            ->columnspan(4),
                         Forms\Components\Textinput::make('disease_description')
                             ->label("Diseas Description")
                             ->required()
-                            ->columnspan(7),
+                            ->columnspan(4),
+                        Select::make('disease_type')
+                            ->options([
+                                'Viral' => 'Viral',
+                                'Bacterial' => 'Bacterial',
+                                'Parasitic Worm' => 'Parasitic Worm',
+                            ])
+                            ->required()
+                            ->columnspan(2),
+                        Textarea::make("treatment")
+                            ->required()
+                            ->columnspan(6),
+                        Textarea::make("preventions")
+                            ->required()
+                            ->columnspan(6)
                     ])
                     ->columns(12),
                 Section::make('List Of Symptoms')
@@ -78,12 +97,35 @@ class DiseaseResource extends Resource
         return $table
             ->columns([
                 //
-                Tables\Columns\TextColumn::make('animal.animal_name')
-                    ->label("For Animals")
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('animal.animal_name')
+                //     ->label("For Animals")
+                //     ->searchable(),
                 Tables\Columns\TextColumn::make('disease_description')
+                    ->description(fn($record): string => $record->disease_type)
                     ->label("Disease Description")
-                    ->searchable(),
+                    ->searchable()
+                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 20%;'])
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('diseaseSymptoms.Symptomx.symptom_descr')
+                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
+                    ->label("Symptoms")
+                    ->searchable()
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
+                    ->bulleted()
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('treatment')
+                    ->label("Treatment")
+                    ->searchable()
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('preventions')
+                    ->label("Preventions")
+                    ->searchable()
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
+                    ->wrap(),
+
 
             ])
             ->filters([
@@ -93,14 +135,18 @@ class DiseaseResource extends Resource
                     ->options(Animal::whereNot("animal_name", "All")->pluck('animal_name', 'id'))
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                ])
+                    ->icon("heroicon-s-cog-6-tooth")
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+        ;
+        // ->bulkActions([
+        //     Tables\Actions\BulkActionGroup::make([
+        //         Tables\Actions\DeleteBulkAction::make(),
+        //     ]),
+        // ]);
     }
 
     public static function getRelations(): array

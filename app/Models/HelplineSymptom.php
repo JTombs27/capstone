@@ -9,4 +9,9 @@ class HelplineSymptom extends Model
 {
     use HasFactory;
     protected $guarded  = [];
+
+    public function symptoms()
+    {
+        $this->belongsTo(Symptom::class, "symptom_id", "id");
+    }
 }

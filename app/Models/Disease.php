@@ -11,10 +11,11 @@ class Disease extends Model
     protected $table    = "diseases";
     protected $guarded  = [];
 
-    public function Symptoms()
+    public function diseaseSymptoms()
     {
-        return $this->hasMany(DiseaseSymptom::class, "disease_id", "id");
+        return $this->hasMany(DiseaseSymptom::class, 'disease_id', 'id');
     }
+
 
     public function Animal()
     {

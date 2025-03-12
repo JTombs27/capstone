@@ -10,4 +10,9 @@ class Symptom extends Model
     use HasFactory;
     protected $table    = "symptoms";
     protected $guarded  = [];
+
+    public function diseaseSymptoms()
+    {
+        return $this->hasMany(DiseaseSymptom::class, 'symptom_id', 'id');
+    }
 }

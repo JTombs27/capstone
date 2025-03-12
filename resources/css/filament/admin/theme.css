@@ -52,16 +52,19 @@
     @apply bg-slate-800;
     @apply dark:bg-slate-800;
 }
-.fi-sidebar-item-active svg > path{
+
+.fi-sidebar-item-active svg>path {
     @apply fill-yellow-800 !important;
     @apply stroke-yellow-500 !important;
-  
+
 }
-.fi-sidebar-item-active > a{
+
+.fi-sidebar-item-active>a {
     @apply border-yellow-500 !important;
     @apply border !important;
     @apply bg-slate-900 !important;
 }
+
 .fi-sidebar-header,
 .fi-topbar>nav {
     @apply dark:bg-slate-900;
@@ -141,6 +144,20 @@ ul.fi-sidebar-nav-groups {
     @apply py-2 !important;
 }
 
+.dictionary-cell {
+    vertical-align: top !important;
+}
+
+button.fi-link::before {
+    content: none !important;
+}
+
+
+#disease-checkbox {
+    width: 30px;
+    height: 30px;
+}
+
 .fi-ta-table,
 .fi-ta-table>tbody,
 .fi-ta-table>thead {
@@ -149,7 +166,7 @@ ul.fi-sidebar-nav-groups {
 
 .fi-ta-row {
     @apply hover:dark:bg-white/5 !important;
-    @apply hover:bg-slate-400 !important;
+    @apply hover:bg-slate-100 !important;
 }
 
 .fi-ta-header-toolbar,
@@ -184,9 +201,29 @@ ul.fi-sidebar-nav-groups {
     @apply border;
 }
 
+.no-border {
+    @apply ring-0;
+    @apply shadow-none;
+}
+
+.no-padding-sections-header .fi-section-header {
+    @apply py-2;
+}
+
+.no-padding-sections-header .fi-section-content {
+    @apply p-4;
+    @apply py-2;
+}
+
+.no-border .leaflet-container {
+    min-height: 450px !important;
+}
+
 .fi-ta-actions-cell {
     @apply text-center;
     @apply px-2.5;
+    vertical-align: top !important;
+    padding-top: 5px;
 }
 
 .fi-ta-selection-cell {

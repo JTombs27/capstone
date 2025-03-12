@@ -13,8 +13,8 @@ class DiseaseSymptom extends Model
     {
         return $this->belongsTo(Disease::class, "disease_id", "id");
     }
-    public function symptom()
+    public function Symptomx()
     {
-        return $this->belongsTo(Symptom::class, "symptom_id", "id");
+        return $this->belongsTo(Symptom::class, 'symptom_id', 'id');
     }
 }

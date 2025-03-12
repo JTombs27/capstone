@@ -16,6 +16,9 @@ return new class extends Migration
             $table->integer("animal_id");
             $table->string("disease_description");
             $table->boolean("contigouse");
+            $table->string("disease_type");
+            $table->text("treatment");
+            $table->text("preventions");
             $table->timestamps();
         });
     }
