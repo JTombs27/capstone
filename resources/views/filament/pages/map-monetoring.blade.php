@@ -1,6 +1,6 @@
 
 <div class="grid grid-cols-12 mt-5">
-     <div class="md:col-span-8 lg:col-span-8 col-span-12">
+     <div class="md:col-span-8 lg:col-span-8 col-span-12" wire:ignore>
             <div class="shadow p-4 bg-slate-900" style="border-radius: 10px 0px 0px 0px;">
               <h5 class="font-bold text-gray-700 text-white">
                         Geographic Information System
@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <!-- Leaflet JS -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+   
         <script>
             document.addEventListener('DOMContentLoaded', function () 
             {
@@ -86,14 +86,7 @@
                         iconSize: [41, 41],
                         iconAnchor: [12, 40],
                         popupAnchor: [1, -34]
-                    });
-
-                    // Create the marker
-                    // const diseaseMarker = L.marker([disease.latitude, disease.longitude], { icon: customIcon })
-                    //     .bindPopup('Disease : ' + disease.disease.disease_description)
-                    //     .addTo(map);
-
-                    // Create the circle
+                    })
                     const circle = L.circle([disease.latitude, disease.longitude], {
                         color: 'red',       // Circle border color
                         fillColor: 'green', // Circle fill color
@@ -102,11 +95,14 @@
                         weight: 4,
                         opacity: 0.4
                     })
-                        .bindPopup('Disease : ' + disease.disease.disease_description)
-                        .addTo(map);
+                    .bindPopup('Disease : ' + disease.disease.disease_description)
+                    .addTo(map);
 
-                    // Add layers to the diseaseLayers array
-                    //(diseaseMarker, 
+                    circle.on('click', function () {
+                             window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: disease }));
+                            
+                        });
+
                     diseaseLayers.addLayer(circle);
 
                 });
@@ -114,108 +110,8 @@
                 var overlayMaps = {
                     "All Farms": allFarmType,
                     "Baboyan": baboyan,
-                     "Manokan": manokan
+                    "Manokan": manokan
                 };
-
-                // var municipalities = @json($this->getMunicipalities());
-                
-                // var geoJsonLayerMunicipality;
-                // var currentOpacity = 1;//document.getElementById('opacityInput').value;
-                // fetch('/geoJSON/MunicipalBoundary.json')
-                //         .then(response => response.json())
-                //         .then(geojsonData => {
-                //             const blinkingBarangay = "Casoon"; 
-                //             let currentIndex = 0;
-                //             const Municipalcolors = ["red","transparent"];
-                //             geoJsonLayerMunicipality = L.geoJSON(geojsonData, {
-                //                 style: function (feature) 
-                //                 {
-                //                     var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
-                //                     var color = municipality ? municipality.color : 'orange';
-                                     
-                //                     return { color: color,stroke:true, weight: 2, fillOpacity:currentOpacity, opacity:1};
-                //                 },
-                //                 onEachFeature: function (feature, layer) {
-                //                     if (feature.properties && feature.properties.MUN) 
-                //                     {
-                                       
-                //                         if(feature.properties.MUN.toLowerCase() == "new bataan")
-                //                         {
-                //                             layer.blink = true;
-                                            
-                //                         }
-
-                //                         layer.bindPopup("Name: " + feature.properties.MUN,{
-                //                                     permanent: false,
-                //                                     direction: 'top',
-                //                                 });
-                //                         // Handle click on the polygon
-                //                             layer.on('dblclick', function (e) {
-                //                                 // Get the clicked coordinates
-                //                                 const clickedCoordinates = e.latlng;
-
-                //                                 // Trigger the map's click handler manually
-                //                                 map.fire('dblclick', {
-                //                                     latlng: clickedCoordinates,
-                //                                     layerPoint: e.layerPoint,
-                //                                     containerPoint: e.containerPoint,
-                //                                     originalEvent: e.originalEvent
-                //                                 });
-
-                //                                 // Optional: Prevent propagation to other events
-                //                                 L.DomEvent.stopPropagation(e);
-                //                             });
-
-                //                            // Mouseover event: Highlight the polygon and show details
-                //                             layer.on('mouseover', function (e) {
-                //                                 // Highlight the polygon
-                //                                 e.target.setStyle({
-                //                                     color: 'blue',
-                //                                     weight: 1,
-                //                                     fillOpacity: 0.5,
-                //                                 });
-
-                //                                 // Show details in a tooltip
-                //                                 layer.bindTooltip("Municipality: " + feature.properties.MUN, {
-                //                                     permanent: false,
-                //                                     direction: 'top',
-                //                                 }).openTooltip(e.latlng);
-
-                //                             });
-
-                //                             // Mouseout event: Reset the style and remove details
-                //                             layer.on('mouseout', function (e) {
-                //                                 // Reset the style to default
-                //                                 geoJsonLayerMunicipality.resetStyle(e.target);
-
-                //                                 // Remove the tooltip
-                //                                 e.target.closeTooltip();
-                //                             });
-                //                     }
-                //                 }
-                //             }) //.addTo(map);
-
-                //              // Set up the blinking effect
-                //             setInterval(() => {
-                //                 currentIndex = (currentIndex + 1) % Municipalcolors.length;
-
-                //                 geoJsonLayerMunicipality.eachLayer(layer => {
-                //                     // Check if this layer should blink
-                //                     if (layer.blink) {
-                //                         layer.setStyle({
-                //                             fillColor: Municipalcolors[currentIndex],
-                //                             fillOpacity:1,
-                //                             stroke:true,
-                //                             opacity:1,
-                //                             color:"red"
-                //                         });
-                //                     }
-                //                 });
-                //             }, 500); // Blink every 1 second
-                //         })
-                //         .catch(error => {
-                //             console.error("Error loading GeoJSON:", error);
-                //         });
 
                         fetch('/geoJSON/BarangayBoundary.json')
                         .then(response => response.json())
@@ -311,23 +207,17 @@
                             });
                             layerControl.addTo(map);
 
-                             document.getElementById('opacityInput').addEventListener('input', function (event) {
-                                    // if (event.key === 'Enter') { // Trigger on "Enter" key press
-                                        const opacityValue = parseFloat(this.value); // Get the value from the input field
-                                        if (!isNaN(opacityValue) && opacityValue >= 0 && opacityValue <= 1) {
-                                            currentOpacity = opacityValue; // Update the current opacity
-                                            // geoJsonLayerMunicipality.eachLayer(layer => {
-                                            //     // Apply the new opacity to all layers
-                                            //     layer.setStyle({
-                                            //         fillOpacity: currentOpacity
-                                            //     });
-                                            // });
-                                            console.log("Updated fillOpacity to:", currentOpacity); // Log the new opacity value
-                                        } else {
+                            //  document.getElementById('opacityInput').addEventListener('input', function (event) {
+                            //         // if (event.key === 'Enter') { // Trigger on "Enter" key press
+                            //             const opacityValue = parseFloat(this.value); // Get the value from the input field
+                            //             if (!isNaN(opacityValue) && opacityValue >= 0 && opacityValue <= 1) {
+                            //                 currentOpacity = opacityValue;
+                            //                 console.log("Updated fillOpacity to:", currentOpacity); // Log the new opacity value
+                            //             } else {
                                             
-                                        }
-                                    // }
-                                });
+                            //             }
+                            //         // }
+                            //     });
                             
                         })
                         .catch(error => {
@@ -335,10 +225,9 @@
                         });
                 
 
-                map.on('dblclick', function (e) {
-                        // Log or display the coordinates where the map was clicked
-                        console.log("Clicked Coordinates:", e.latlng);
-                        L.marker(e.latlng).addTo(map);
+                map.on('dblclick', function (e) 
+                    {
+                        
                     });
                             
             });
@@ -350,7 +239,7 @@
     <div class=" p-4 bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
         <label class="font-bold text-center text-gray-700 text-white col-span-8">Map Settings</label>
     </div>
-    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[158px]">
+    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[158px]" >
          <label class="col-span-12 text-sm text-bold">ASF MAP ZONING</label>
          <hr>
          <div class="grid grid-cols-12 gap-y-3">
@@ -375,7 +264,7 @@
          </div>
         
     </div>
-    <div class="shadow bg-slate-900 z-10"  id="map2" style="height: 350px; width: 100%;"></div>
+    <div class="shadow bg-slate-900 z-10" wire:ignore  id="map2" style="height: 350px; width: 100%;"></div>
      <script>
             document.addEventListener('DOMContentLoaded', function () 
             {
@@ -570,11 +459,20 @@
         {{-- dark:bg-cyan-300 --}}
         {{-- <x-filament::page></x-filament::page> --}}
    {{-- </div> --}}
+   
 </div>
 <div class="md:col-span-12 lg:col-span-12 col-span-12" style="margin-top: 0px;">
      <div class=" p-4 bg-slate-800">
         <div class="grid grid-cols-12">
             <div class="col-span-12">
+                  <x-filament::modal id="privacy" slide-over class="z-[999]" alignment="center" width="xl">
+                        <x-slot name="heading">
+                            Disease Information
+                        </x-slot>
+                        {{ $selectedDisease['disease_description'] ?? '' }}
+                         <p>{{ $selectedDisease['treatment'] ?? '' }}</p>
+                    </x-filament::modal>
+
                 <x-filament::page></x-filament::page>
             </div>
         </div>

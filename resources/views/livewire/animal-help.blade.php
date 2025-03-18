@@ -12,9 +12,9 @@
                             <div>
                                  <div class="flex items-center mt-4">
                                     <input type="checkbox" id="agree" wire:model="agree" class="mr-2 w-5 h-5 text-blue-600">
-                                    <label for="agree" class="text-gray-700 cursor-pointer" @click="openModal = true">
+                                    <label for="agree" class="text-gray-700 cursor-pointer" >
                                         I agree to the 
-                                        <span class="text-blue-600 underline">Data Privacy Policy</span>
+                                        <span class="text-blue-600 underline" wire:click.prevent="test">Data Privacy Policy</span>
                                     </label>
                                 </div>
                             </div>
@@ -30,19 +30,11 @@
             </div>
         </div>
     </div>
+    <x-filament::modal id="privacy" class="z-[999]" alignment="center" width="7xl">
+        <x-slot name="heading">
+            Provincial Government Of Davao de Oro Data Privacy and Policy
+        </x-slot>
+        <iframe src="{{ asset('images/Privacy-notice.pdf') }}#toolbar=0&navpanes=0&scrollbar=0&Content-Disposition=inline;filename='Privacy-notice.pdf'" class="w-full h-[400px] "></iframe>
+    </x-filament::modal>
 
-    <!-- Modal for Data Privacy Policy -->
-    <div x-data="{ openModal: false }">
-        <div x-show="openModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-2xl">
-                <h2 class="text-xl font-semibold mb-4">Data Privacy Policy</h2>
-                <iframe src="{{ asset('storage/privacy-policy.pdf') }}" class="w-full h-96"></iframe>
-                <div class="flex justify-end mt-4">
-                    <button @click="openModal = false" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>

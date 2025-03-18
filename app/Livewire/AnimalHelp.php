@@ -307,6 +307,10 @@ class AnimalHelp extends Component implements HasForms
     //     $this->symptomsAdded = [];
     // }
 
+    public function test()
+    {
+        $this->dispatch('open-modal', id: 'privacy');
+    }
     public $symptoms = [];
 
     public function submitApplication()

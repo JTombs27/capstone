@@ -4,14 +4,16 @@ namespace App\Filament\Pages;
 
 use App\Models\Animal;
 use App\Models\Barangay;
+use App\Models\Helpline;
 use Filament\Pages\Page;
 use App\Models\Municipality;
 use App\Models\RegisteredFarm;
+use Filament\Pages\Actions\Action;
 use App\Filament\Widgets\DiseaseInfo;
 use App\Filament\Widgets\StatsOverview;
-use App\Filament\Resources\HelplineResource\Widgets\MonitoringStats;
 use App\Filament\Widgets\BlogPostsChart;
-use App\Models\Helpline;
+use App\Filament\Resources\HelplineResource\Widgets\MonitoringStats;
+use Livewire\Attributes\On;
 
 class MapMonetoring extends Page
 {
@@ -24,6 +26,20 @@ class MapMonetoring extends Page
     protected ?string $heading                  = "";
     public $farm_types;
 
+    public $selectedDisease = [];
+
+    protected function getListeners(): array
+    {
+
+        return ['open-disease-modal' => 'handleOpenDiseaseModal'];
+    }
+
+    public function handleOpenDiseaseModal($disease)
+    {
+        $this->selectedDisease = $disease;
+        // dd($this->selectedDisease);
+        $this->dispatch('open-modal', id: 'privacy');
+    }
     public function mount()
     {
         $this->farm_types = Animal::all()->sortBy('animal_name')->pluck('animal_name');
@@ -105,10 +121,4 @@ class MapMonetoring extends Page
             MonitoringStats::class
         ];
     }
-    // protected function getFooterWidgets(): array
-    // {
-    //     return [
-    //         BlogPostsChart::class
-    //     ];
-    // }
 }
