@@ -61,7 +61,12 @@ class RegisteredFarmResource extends Resource
                                 Forms\Components\TextInput::make('owner_suffix')
                                     ->label('Suffix')
                                     ->maxLength(255)
-                                    ->columnSpan(1)
+                                    ->columnSpan(1),
+                                Forms\Components\TextInput::make('contact_number')
+                                    ->label('Contact Number:')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(4),
                             ])
                             ->columns(12)
                             ->columnSpan(12),

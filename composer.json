@@ -9,7 +9,7 @@
         "bezhansalleh/filament-shield": "^3.3",
         "dotswan/filament-map-picker": "^1.7",
         "filament/filament": "^3.2",
-        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/guzzle": "^7.9",
         "jantinnerezo/livewire-alert": "^3.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",

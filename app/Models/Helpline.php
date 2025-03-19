@@ -29,6 +29,15 @@ class Helpline extends Model
     {
         return $this->belongsTo(Animal::class, "animal_id", "id");
     }
+    public function municipal()
+    {
+        return $this->belongsTo(Municipality::class, "query_municipality", "id");
+    }
+    public function barangay()
+    {
+        return $this->belongsTo(Barangay::class, "query_barangay", "id");
+    }
+
 
     public function disease()
     {

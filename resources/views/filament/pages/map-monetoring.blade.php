@@ -80,7 +80,8 @@
                 var monitoredDiseases = @json($this->getDiseaseMonitored());
 
                 // Add Disease Markers and Circles
-                monitoredDiseases.forEach(function (disease) {
+                monitoredDiseases.forEach(function (disease) 
+                {
                     const customIcon = L.icon({
                         iconUrl: '/images/diseaseMarker.png', // Custom icon image URL
                         iconSize: [41, 41],
@@ -95,11 +96,30 @@
                         weight: 4,
                         opacity: 0.4
                     })
-                    .bindPopup('Disease : ' + disease.disease.disease_description)
                     .addTo(map);
 
+
+                     circle.on('mouseover', function (e) {
+                        // Show details in a tooltip
+                        circle.bindTooltip('Disease : ' + disease.disease.disease_description, {
+                            permanent: false,
+                            direction: 'top',
+                        }).openTooltip(e.latlng);
+
+                    });
+
+                                            // Mouseout event: Reset the style and remove details
+                    circle.on('mouseout', function (e) {
+                            e.target.closeTooltip();
+                        });
+
+                    var params = {
+                        "details": disease
+                    };
+
+
                     circle.on('click', function () {
-                             window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: disease }));
+                             window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: params }));
                             
                         });
 
@@ -465,12 +485,42 @@
      <div class=" p-4 bg-slate-800">
         <div class="grid grid-cols-12">
             <div class="col-span-12">
-                  <x-filament::modal id="privacy" slide-over class="z-[999]" alignment="center" width="xl">
+                  <x-filament::modal id="diseaseInfo" slide-over class="z-[999]" alignment="center" width="md">
                         <x-slot name="heading">
                             Disease Information
                         </x-slot>
-                        {{ $selectedDisease['disease_description'] ?? '' }}
-                         <p>{{ $selectedDisease['treatment'] ?? '' }}</p>
+                            Municipality of: {{ $selectedDisease["municipal"]['municipality_name'] ?? '' }}<br/>
+                            Under Barangay of: {{ $selectedDisease["barangay"]['barangay_name'] ?? '' }}<br/>
+                         <p><b>Disease :</b>{{ $selectedDisease["disease"]['disease_description'] ?? '' }} 
+                            <i class="text-gray-500" style="font-size: 12px !important;">Sakit sa {{ $selectedDisease["animal"]['animal_name'] ?? ''}}</i>
+                         </p>
+                         <p><b>Preventions:</b><br>{{ $selectedDisease["disease"]['preventions'] ?? '' }}</p>
+                         <p><b>Treatments:</b><br>{{ $selectedDisease["disease"]['treatment'] ?? '' }}</p>
+                        <hr>
+                        <p>Area Registered Farm/s:</p>
+                        <div class="gap-y-1">
+                            @foreach ($registeredFarms as $item)
+                             <form wire:submit.prevent="sendSMS({{$item['id']}},{{$selectedDisease['id']}})" >
+                             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                                <img class="mx-auto block h-[50px] rounded-full sm:mx-0 sm:shrink-0" src="/images/farmerProfileBoy.png" alt="" />
+                                <div class="space-y-2 text-center sm:text-left">
+                                    <div class="space-y-0.5">
+                                    <p class="text-lg font-semibold text-black">{{$item["owner_firstname"]." ".$item["owner_lastname"]}} 
+                                       
+                                            <button type="submit" class="border rounded px-2  text-purple-600 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700">
+                                                <small style="font-size: 10px !important;">Notify</small>
+                                            </button>
+                                        
+                                    </p>
+                                    <i class="text-gray-500" style="font-size: 10px !important;">Not Yet Notified</i>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            </form>
+                         @endforeach
+                        </div>
+                         
                     </x-filament::modal>
 
                 <x-filament::page></x-filament::page>
