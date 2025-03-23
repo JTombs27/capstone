@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <x-filament::modal id="privacy" class="z-[999]" alignment="center" width="7xl">
+    <x-filament::modal id="privacy" class="z-[999] mt-10" alignment="center" width="7xl">
         <x-slot name="heading">
             Provincial Government Of Davao de Oro Data Privacy and Policy
         </x-slot>

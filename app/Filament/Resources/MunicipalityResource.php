@@ -8,6 +8,8 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Municipality;
 use Filament\Resources\Resource;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\ColorColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MunicipalityResource\Pages;
@@ -57,6 +59,8 @@ class MunicipalityResource extends Resource
                 //
                 Tables\Columns\TextColumn::make('municipality_name')
                     ->searchable(),
+                ColorColumn::make('color') // Assumes 'color' stores the hex code like "#FF0000"
+                    ->label('Color')
             ])
             ->filters([
                 //

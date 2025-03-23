@@ -5,6 +5,8 @@
             @livewire(\App\Filament\Widgets\StatsOverview::class)
             
             @livewire(\App\Filament\Widgets\BlogPostsChart::class)
+
+            @livewire(\App\Filament\Widgets\diseaseChart::class)
         </div>
      </div>
     <div class="md:col-span-4 lg:col-span-4 col-span-12 ">
@@ -32,7 +34,7 @@
                         });
 
                         var map2 = L.map('map2', {
-                            center: [7.5547,126.1404],
+                            center: [7.542,126.16],
                             zoom: 9,
                             layers: [googleStreets2]
                         });
@@ -63,10 +65,20 @@
                                             if (feature.properties && feature.properties.MUN) 
                                             {
                                             
-                                                if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
-                                                {
+                                                 let municipality = municipalities.find(m => 
+                                                    m.municipality.municipality_name.toLowerCase() === feature.properties.MUN.toLowerCase()
+                                                );
+
+                                                let color = municipality ? municipality.color_code : 'orange';
+
+                                                // If the municipality's fillColor is red, add it to blinkingLayers
+                                                if (color === "red") {
                                                     layer.blink = true;
                                                 }
+                                                // if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
+                                                // {
+                                                //     layer.blink = true;
+                                                // }
 
                                                 layer.bindPopup("Name: " + feature.properties.MUN,{
                                                             permanent: false,

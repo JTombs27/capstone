@@ -43,4 +43,6 @@ class BlogPostsChart extends ChartWidget
     {
         return 'bar';
     }
+
+    protected static ?string $maxHeight = "255px";
 }

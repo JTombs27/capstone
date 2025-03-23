@@ -24,7 +24,7 @@
                 <!-- End Col -->
 
                 <div class="relative ms-4">
-                    <img src="https://davaodeoro.gov.ph/wp-content/uploads/2022/08/gov-dorothy.png" alt="Image Description">
+                    <img src="/images/Philsan_Hero_Banner1.avif" alt="Image Description">
                     <!-- <div class="absolute inset-0 -z-[1] bg-gradient-to-tr from-gray-200 via-white/0 to-white/0 rounded-md mt-4 -mb-4 me-4 -ms-4 lg:mt-6 lg:-mb-6 lg:me-6 lg:-ms-6 dark:from-slate-800 dark:via-slate-900/0 dark:to-slate-900/0"></div> -->
 
                     <!-- SVG-->

@@ -259,8 +259,9 @@
     <div class=" p-4 bg-slate-900" style="border-radius: 0px 10px 0px 0px;">
         <label class="font-bold text-center text-gray-700 text-white col-span-8">Map Settings</label>
     </div>
-    <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[158px]" >
-         <label class="col-span-12 text-sm text-bold">ASF MAP ZONING</label>
+     <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[38px]" ><label class="col-span-12 text-sm text-bold">Municipal Boundaries</label></div>
+    {{-- <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[158px]" >
+         <label class="col-span-12 text-sm text-bold">Municipal Boundaries</label>
          <hr>
          <div class="grid grid-cols-12 gap-y-3">
              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="blinking-svg size-6 mt-2 container my-auto size-6 fill-marker-danger stroke-marker-danger col-span-1">
@@ -283,8 +284,8 @@
             <label class="col-span-8 text-sm container my-auto">Surviellance zone (ASF Free).</label>
          </div>
         
-    </div>
-    <div class="shadow bg-slate-900 z-10" wire:ignore  id="map2" style="height: 350px; width: 100%;"></div>
+    </div> --}}
+    <div class="shadow bg-slate-900 z-10" wire:ignore  id="map2" style="height: 470px; width: 100%;"></div>
      <script>
             document.addEventListener('DOMContentLoaded', function () 
             {
@@ -292,8 +293,8 @@
 
                 //google streets 'http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}' 
                 var googleStreets2 = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}',{
-                    maxZoom: 15,
-                    minZoom: 7,  
+                    maxZoom: 9,
+                    minZoom: 9,  
                     subdomains:['mt0','mt1','mt2','mt3']
                 });
 
@@ -409,76 +410,6 @@
                        
             });
 </script>
-    {{-- <div class=" text-white pl-3 pr-3 pb-2 bg-slate-900 h-[508px]"> 
-        <div class="grid grid-cols-12 gap-y-3">
-             <div class="col-span-full grid grid-cols-12 border rounded p-3">
-                <div class="col-span-4 container my-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-55">
-                    <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="col-span-8 container my-auto">
-                        <label id="dateCal" class="text-2xl font-bold text-slate-50">
-                        </label><br>
-                        <label id="clock" class="text-xl font-semibold text-blue-500 "></label><br>
-                        <label id="week" class="text-2xl font-semibold text-blue-500 "></label>
-                </div>
-            </div>
-             <hr class="col-span-12">
-            <label class="col-span-12 text-sm text-bold">Municipality</label>
-            <label class="container col-span-7 my-auto text-sm">Map Opacity:</label>
-            <input type="number" class="col-span-5 rounded-lg text-black border text-xs" id="opacityInput" value="0" placeholder="Enter opacity (0-1)" min="0" max="1" step="0.1">
-            <hr class="col-span-12">
-            <label class="col-span-12">Indicators</label>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class=" container my-auto size-6 fill-farm-marker stroke-slate-50 col-span-3">
-            <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd" />
-            </svg>
-            <label class="col-span-9 text-sm container my-auto">Registered Farms with farm type.</label>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class=" container my-auto size-6 fill-marker-danger stroke-slate-50 col-span-3">
-                <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
-            </svg>
-            <label class="col-span-9 text-sm container my-auto">Disease Marker indicators and its scope.</label>
-
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="blinking-svg size-6 container my-auto size-6 fill-marker-danger stroke-marker-danger col-span-3">
-                <path fill-rule="evenodd" d="M9 4.5a.75.75 0 0 1 .721.544l.813 2.846a3.75 3.75 0 0 0 2.576 2.576l2.846.813a.75.75 0 0 1 0 1.442l-2.846.813a3.75 3.75 0 0 0-2.576 2.576l-.813 2.846a.75.75 0 0 1-1.442 0l-.813-2.846a3.75 3.75 0 0 0-2.576-2.576l-2.846-.813a.75.75 0 0 1 0-1.442l2.846-.813A3.75 3.75 0 0 0 7.466 7.89l.813-2.846A.75.75 0 0 1 9 4.5ZM18 1.5a.75.75 0 0 1 .728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 0 1 0 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 0 1-1.456 0l-.258-1.036a2.625 2.625 0 0 0-1.91-1.91l-1.036-.258a.75.75 0 0 1 0-1.456l1.036-.258a2.625 2.625 0 0 0 1.91-1.91l.258-1.036A.75.75 0 0 1 18 1.5ZM16.5 15a.75.75 0 0 1 .712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 0 1 0 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 0 1-1.422 0l-.395-1.183a1.5 1.5 0 0 0-.948-.948l-1.183-.395a.75.75 0 0 1 0-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0 1 16.5 15Z" clip-rule="evenodd" />
-            </svg>
-            <label class="col-span-9 text-sm container my-auto">Blinking red in map, Barangay or Municipal report level threshold have reach.</label>
-           
-            <script>
-                function updateClock() {
-                    const clockElement = document.getElementById('clock');
-                    const labelDate = document.getElementById('dateCal');
-                    const weeklbl = document.getElementById('week');
-                    const now = new Date();
-                    const hours = now.getHours().toString().padStart(2, '0') == "00" ? "12":now.getHours().toString().padStart(2, '0');
-                    const minutes = now.getMinutes().toString().padStart(2, '0');
-                    const seconds = now.getSeconds().toString().padStart(2, '0');
-                    const ampm = now.getHours().toString().padStart(2, '0') >= 12 ? 'PM' : 'AM';
-                    const options = {
-                                weekday: 'long',    // Day of the week (e.g., "Sunday")
-                                year: 'numeric',    // Full year (e.g., 2025)
-                                month: 'short',     // Abbreviated month (e.g., "Jan")
-                                day: '2-digit',     // Day as 2 digits (e.g., "12")
-                            };
-
-                            // Format the date
-                    const formattedDate = now.toLocaleDateString('en-US', options);
-
-                            // Modify the month to be uppercase
-                    const [weekday, month, day, year] = formattedDate.split(' ');
-                    dateCal.innerHTML = `${(hours >12 ? (hours-12).toString().padStart(2, '0'):hours)}:${minutes}:${seconds} ${ampm}`;
-                    clockElement.textContent = `${month.toUpperCase()}. ${day} ${year}`;
-                    weeklbl.textContent = `${weekday.replace(',','')}`;
-                }
-
-                setInterval(updateClock, 1000);
-                // updateClock();
-            </script>
-
-        </div>
-        {{-- dark:bg-cyan-300 --}}
-        {{-- <x-filament::page></x-filament::page> --}}
-   {{-- </div> --}}
    
 </div>
 <div class="md:col-span-12 lg:col-span-12 col-span-12" style="margin-top: 0px;">

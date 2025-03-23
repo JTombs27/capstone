@@ -15,7 +15,11 @@ class municipalASFZoning extends BaseWidget
     {
         return $table
             ->query(
-                ASFZoning::with("municipality")
+                ASFZoning::query()
+                    ->join('municipalities', 'asfzoning.municipality_id', '=', 'municipalities.id')
+                    ->orderBy('municipalities.municipality_name')
+                    ->select('asfzoning.*') // Make sure to select ASFZoning fields to avoid conflicts
+                    ->with('municipality')
             )
             ->columns([
                 TextColumn::make('municipality.municipality_name')
