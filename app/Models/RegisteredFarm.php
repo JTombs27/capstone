@@ -25,4 +25,9 @@ class RegisteredFarm extends Model
     {
         return $this->belongsTo(Animal::class, "farm_type", "id");
     }
+
+    public function smsNotifications()
+    {
+        return $this->hasMany(SMSNotification::class, "farm_id", "id");
+    }
 }

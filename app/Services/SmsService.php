@@ -33,4 +33,13 @@ class SmsService
 
         return $response;
     }
+
+    public function getBalance()
+    {
+        $response = Http::timeout(30)->get('https://api.semaphore.co/api/v4/account', [
+            'apikey' => $this->apiKey,
+        ]);
+
+        return $response->json();
+    }
 }

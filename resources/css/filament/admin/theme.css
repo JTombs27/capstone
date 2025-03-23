@@ -109,6 +109,23 @@
     @apply bg-slate-900 !important;
 }
 
+.fi-wi-stats-overview-stat {
+    @apply border !important;
+}
+
+.fi-wi-chart>section {
+    @apply border !important;
+    margin-top: 5px !important;
+}
+
+.dashboardx .fi-ta-ctn {
+    border-radius: 0px 0px 5px 5px !important;
+}
+
+.fi-wi-stats-overview-stats-ctn {
+    @apply gap-3;
+}
+
 .fi-sidebar-header,
 .fi-topbar>nav {
     @apply dark:bg-slate-900;

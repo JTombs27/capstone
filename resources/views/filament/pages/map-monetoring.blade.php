@@ -512,7 +512,18 @@
                                             </button>
                                         
                                     </p>
-                                    <i class="text-gray-500" style="font-size: 10px !important;">Not Yet Notified</i>
+                                    @if (!empty($item->smsNotifications))
+                                        @php
+                                            $smsNotifications = json_decode($item->smsNotifications, true);
+                                        @endphp
+                                        <i class="text-gray-500" style="font-size: 10px !important;">
+                                            {{ $smsNotifications[0]['status'] ?? 'No status available' }}
+                                        </i>
+                                    @else
+                                        <i class="text-gray-500" style="font-size: 10px !important;">No notifications</i>
+                                    @endif
+                                    {{-- <i class="text-gray-500" style="font-size: 10px !important;">{{!empty($item->smsNotifications) ? $item->smsNotifications:"Not yet notified!" }}</i> --}}
+                                     {{-- <i class="text-gray-500" style="font-size: 10px !important;">{{$item->smsNotifications }}</i> --}}
                                     </div>
                                     
                                 </div>
@@ -523,7 +534,7 @@
                          
                     </x-filament::modal>
 
-                <x-filament::page></x-filament::page>
+                {{-- <x-filament::page></x-filament::page> --}}
             </div>
         </div>
      </div>

@@ -17,6 +17,7 @@ use Filament\Notifications\Notification;
 use App\Filament\Resources\HelplineResource\Widgets\MonitoringStats;
 use App\Models\SMSNotification;
 use App\Services\SmsService;
+use PhpParser\Node\Stmt\TryCatch;
 
 class MapMonetoring extends Page
 {
@@ -40,10 +41,14 @@ class MapMonetoring extends Page
     public function handleOpenDiseaseModal($details)
     {
         $this->selectedDisease = $details;
-        //dd($details);
+
         $brangayid = $this->selectedDisease["query_barangay"];
-        $this->registeredFarms = RegisteredFarm::with('animal')->where("farm_barangay", "=", $brangayid)->get();
-        //dd($this->registeredFarms[0]["owner_firstname"]);
+        $help_id =  $this->selectedDisease["id"];
+        $this->registeredFarms = RegisteredFarm::with(['animal', 'smsNotifications' => function ($query) use ($help_id) {
+            $query->where('helpline_id', $help_id);
+        }])
+            ->where("farm_barangay", "=", $brangayid)
+            ->get();
         $this->dispatch('open-modal', id: 'diseaseInfo');
     }
 
@@ -56,31 +61,75 @@ class MapMonetoring extends Page
         $phoneNumber = $farm['contact_number'];
         $message = "Provincial Veterinary Office of the Province of Davao de Oro. We do inform you to do biosecurity measure, Animal disease Reported around your barangay.";
         $response = $smsService->sendSMS($phoneNumber, $message);
-        //dd($response);
         // Check response (you can customize this based on Semaphore API response)
-        if (($response[0]['status'] == "queued" || $response[0]['status'] == "Pending")) {
-            SMSNotification::create([
-                'helpline_id'   => $helpline_id,
-                'farm_id'       => $farm['id'],
-                'phone_number'  => $phoneNumber,
-                'message'       => $message,
-                'status'        => $response[0]['status'], // Initial status
-                'message_id'    => $response[0]['message_id'] ?? null, // Save Message ID
-            ]);
+        $exist = SMSNotification::where('help_id', $helpline_id)->where('farm_id', $id)->first();
+        try {
 
-            Notification::make()
-                ->title('Notification Sent!')
-                ->success()
-                ->body($farm['owner_firstname'] . ' ' . $farm['contact_number']  . ' successfully notified.')
-                ->seconds(3)
-                ->icon('heroicon-o-bell') // Optional icon
-                ->send();
-        } else {
+            if (($response[0]['status'] == "queued" || $response[0]['status'] == "Pending")) {
+                if ($exist) {
+                    $exist->update([
+                        'status'        => $response[0]['status'], // Initial status
+                        'message_id'    => $response[0]['message_id'] ?? null, // Save Message ID
+                    ]);
+
+                    Notification::make()
+                        ->title('Notification Re-Sent!')
+                        ->success()
+                        ->body($farm['owner_firstname'] . ' ' . $farm['contact_number']  . ' successfully notified.')
+                        ->seconds(3)
+                        ->icon('heroicon-o-bell') // Optional icon
+                        ->send();
+                } else {
+                    SMSNotification::create([
+                        'helpline_id'   => $helpline_id,
+                        'farm_id'       => $farm['id'],
+                        'phone_number'  => $phoneNumber,
+                        'message'       => $message,
+                        'status'        => $response[0]['status'], // Initial status
+                        'message_id'    => $response[0]['message_id'] ?? null, // Save Message ID
+                    ]);
+
+                    Notification::make()
+                        ->title('Notification Sent!')
+                        ->success()
+                        ->body($farm['owner_firstname'] . ' ' . $farm['contact_number']  . ' successfully notified.')
+                        ->seconds(3)
+                        ->icon('heroicon-o-bell') // Optional icon
+                        ->send();
+                }
+            } else {
+                Notification::make()
+                    ->title('SMS Failed')
+                    ->danger()
+                    ->body('Could not send SMS. Please try again.')
+                    ->send();
+            }
+            $this->updateallSMS();
+        } catch (\Throwable $th) {
             Notification::make()
                 ->title('SMS Failed')
                 ->danger()
                 ->body('Could not send SMS. Please try again.')
                 ->send();
+            //throw $th;
+        }
+    }
+
+    public function updateallSMS()
+    {
+        $smsService = new SmsService();
+        // Get all SMS logs with pending status
+        $smsLogs = SMSNotification::where('status', 'pending')->get();
+
+        foreach ($smsLogs as $log) {
+            if ($log->message_id) {
+                $statusResponse = $smsService->getSmsStatus($log->message_id);
+
+                if (isset($statusResponse[0]['status'])) {
+                    // Update status in the database
+                    $log->update(['status' => $statusResponse[0]['status']]);
+                }
+            }
         }
     }
 
@@ -104,6 +153,7 @@ class MapMonetoring extends Page
     public function mount()
     {
         $this->farm_types = Animal::all()->sortBy('animal_name')->pluck('animal_name');
+        $this->updateallSMS();
     }
 
     public function extractNameAndPopulationFromGeoJSON($geoJsonFilePath)
@@ -169,18 +219,18 @@ class MapMonetoring extends Page
         return $data;
     }
 
-    public static function getWidgets(): array
-    {
-        return [
-            MonitoringStats::class,
-        ];
-    }
+    // public static function getWidgets(): array
+    // {
+    //     return [
+    //         MonitoringStats::class,
+    //     ];
+    // }
 
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            MonitoringStats::class
-        ];
-    }
+    // protected function getHeaderWidgets(): array
+    // {
+    //     return [
+    //         MonitoringStats::class
+    //     ];
+    // }
 }
