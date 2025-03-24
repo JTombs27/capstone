@@ -23,7 +23,7 @@ class municipalASFZoning extends BaseWidget
             )
             ->columns([
                 TextColumn::make('municipality.municipality_name')
-                    ->label('Municipality Name')
+                    ->label('Municipality')
                     ->default('N/A'),
                 TextColumn::make('remarks')
                     ->label('Status')

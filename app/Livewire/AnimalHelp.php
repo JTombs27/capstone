@@ -228,6 +228,7 @@ class AnimalHelp extends Component implements HasForms
                                     ->label("Sample Images")
                                     ->multiple()
                                     ->maxParallelUploads(1)
+                                    ->visible(false)
                                     ->columnspan(12),
                             ])
                             ->extraAlpineAttributes(['class' => 'no-border'])
