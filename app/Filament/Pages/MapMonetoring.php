@@ -62,7 +62,7 @@ class MapMonetoring extends Page
         $message = "Provincial Veterinary Office of the Province of Davao de Oro. We do inform you to do biosecurity measure, Animal disease Reported around your barangay.";
         $response = $smsService->sendSMS($phoneNumber, $message);
         // Check response (you can customize this based on Semaphore API response)
-        $exist = SMSNotification::where('help_id', $helpline_id)->where('farm_id', $id)->first();
+        $exist = SMSNotification::where('helpline_id', $helpline_id)->where('farm_id', $id)->first();
         try {
 
             if (($response[0]['status'] == "queued" || $response[0]['status'] == "Pending")) {
