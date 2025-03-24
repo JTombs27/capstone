@@ -107,6 +107,7 @@ class MapMonetoring extends Page
             }
             $this->updateallSMS();
         } catch (\Throwable $th) {
+            dd($th->getMessage());
             Notification::make()
                 ->title('SMS Failed')
                 ->danger()
