@@ -133,7 +133,7 @@
                     "Manokan": manokan
                 };
 
-                        fetch('/geoJSON/BarangayBoundary.json')
+                        fetch('/geoJson/BarangayBoundary.json')
                         .then(response => response.json())
                         .then(geojsonData => {
                             
@@ -307,7 +307,7 @@
                 
                 var geoJsonLayerMunicipality;
                 var currentOpacity = 1;//document.getElementById('opacityInput').value;
-                fetch('/geoJSON/MunicipalBoundary.json')
+                fetch('/geoJson/MunicipalBoundary.json')
                         .then(response => response.json())
                         .then(geojsonData => {
                             const blinkingBarangay = "Casoon"; 
