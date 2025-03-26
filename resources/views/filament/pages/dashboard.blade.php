@@ -25,7 +25,8 @@
                     document.addEventListener('DOMContentLoaded', function () 
                     {
                         
-
+                         let iframe = document.getElementById("crystalReportViewer");
+                         iframe.style.height = window.innerHeight * 0.8 + "px"; // 80% of viewport
                         //google streets 'http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}' 
                         var googleStreets2 = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}',{
                             maxZoom: 9,
@@ -164,6 +165,10 @@
             <x-slot name="heading">
                 ASF Zoning
             </x-slot>
+            <div class="col-span-12 h-[500px]"> 
+                    <iframe id="crystalReportViewer" src="http://localhost:60308/CrystalReportMVC" width="100%" height="100%"></iframe>
+            </div>
+
             <form  wire:submit.prevent="save()">
                  {{ $this->form }}
                 <x-slot name="footer">

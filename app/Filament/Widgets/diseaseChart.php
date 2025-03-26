@@ -5,13 +5,29 @@ namespace App\Filament\Widgets;
 use App\Models\Municipality;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
+use Filament\Forms\Components\Select;
+use Filament\Widgets\Concerns\InteractsWithFilters;
 
 class diseaseChart extends ChartWidget
 {
     protected static ?string $heading = 'Annual Disease  Monitoring Report';
     protected static ?string $maxHeight = "300px";
+    protected function getFiltersFormSchema(): array
+    {
+        return [
+            Select::make('year')
+                ->label('Select Year')
+                ->options([
+                    '2023' => '2023',
+                    '2024' => '2024',
+                ])
+                ->default(date('Y')),
+        ];
+    }
+
     protected function getData(): array
     {
+        $year = $this->filters['year'] ?? date('Y');
         // Define fixed month labels (January to December)
         $months = [
             'January',
@@ -70,6 +86,18 @@ class diseaseChart extends ChartWidget
         return [
             'datasets' => $datasets,
             'labels' => $months,
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'zoom' => [
+                    'pan' => ['enabled' => true, 'mode' => 'x'],
+                    'zoom' => ['enabled' => true, 'mode' => 'x'],
+                ],
+            ],
         ];
     }
 

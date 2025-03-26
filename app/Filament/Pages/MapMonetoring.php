@@ -57,10 +57,11 @@ class MapMonetoring extends Page
         $farm = collect($this->registeredFarms)->firstWhere('id', $id);
 
         // Send SMS using the SmsService
-        $smsService = new SmsService();
-        $phoneNumber = $farm['contact_number'];
-        $message = "Provincial Veterinary Office of the Province of Davao de Oro. We do inform you to do biosecurity measure, Animal disease Reported around your barangay.";
-        $response = $smsService->sendSMS($phoneNumber, $message);
+        $smsService     = new SmsService();
+        $phoneNumber    = $farm['contact_number'];
+        $owner          = $farm['owner_firstname'];
+        $message        = "Hi $owner, Provincial Veterinary Office of the Province of Davao de Oro. We do inform you to do biosecurity measure, Animal disease Reported around your barangay.";
+        $response       = $smsService->sendSMS($phoneNumber, $message);
         // Check response (you can customize this based on Semaphore API response)
         $exist = SMSNotification::where('helpline_id', $helpline_id)->where('farm_id', $id)->first();
         try {

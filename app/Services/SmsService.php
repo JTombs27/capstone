@@ -19,7 +19,7 @@ class SmsService
             'apikey' => $this->apiKey,
             'number' => $number,
             'message' => $message,
-            'sendername' => '', // Change this to your registered Sender Name in Semaphore
+            'sendername' => 'DDOPVOADS', // Change this to your registered Sender Name in Semaphore
         ]);
         return $response->json();
     }
