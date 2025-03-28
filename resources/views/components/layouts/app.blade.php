@@ -13,13 +13,14 @@
             [x-cloak] {
                 display: none !important;
             }
+            
         </style>
 
         @filamentStyles
         @vite('resources/css/app.css')
     </head>
 
-    <body class="antialiased">
+    <body class="antialiased transition-all duration-300" id="home" >
     @livewire('partials.navbar')
         {{ $slot }}
     @livewire('partials.footer')
@@ -27,5 +28,30 @@
         @vite('resources/js/app.js')
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <x-livewire-alert::scripts />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sections = document.querySelectorAll("section");
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            function changeActiveLink() {
+            let fromTop = window.scrollY + 150; // Adjust offset if needed
+
+            sections.forEach((section) => {
+                if (
+                section.offsetTop <= fromTop &&
+                section.offsetTop + section.offsetHeight > fromTop
+                ) {
+                navLinks.forEach((link) => link.classList.remove("active"));
+                document
+                    .querySelector(`a[href="#${section.id}"]`)
+                    .classList.add("active");
+                }
+            });
+            }
+
+            window.addEventListener("scroll", changeActiveLink);
+        });
+        </script>
+
     </body>
 </html>

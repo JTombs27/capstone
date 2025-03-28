@@ -2,3 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+.duration-300 {
+    transition-duration: .3s;
+}
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    transition-duration: .15s;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.nav-link {
+    color: gray;
+    transition: color 0.3s;
+}
+
+.nav-link.active {
+    color: blue;
+    /* Change color when section is active */
+    font-weight: bold;
+}
