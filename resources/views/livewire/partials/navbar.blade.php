@@ -36,7 +36,7 @@
                             Best Practices
                         </a>
 
-                        <a class="font-medium {{ request()->is('animal-help') ? 'text-blue-600':'text-gray-500'}} hover:text-gray-400 py-3 md:py-6 dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 nav-link" href="/animal-help">
+                        <a class="font-medium {{ request()->is('animal-help') ? 'text-blue-600':'text-gray-500'}} hover:text-gray-400 py-3 md:py-6 dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 nav-link" href="#animalHelp">
                             Animal Help
                         </a>
                         <!-- <a class="font-medium flex items-center text-gray-500 hover:text-gray-400 py-3 md:py-6 dark:text-gray-400 dark:hover:text-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/cart">

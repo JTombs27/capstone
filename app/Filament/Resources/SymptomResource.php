@@ -19,7 +19,7 @@ class SymptomResource extends Resource
 {
     protected static ?string $model = Symptom::class;
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
-    protected static ?string $navigationGroup = "LIBRARIES";
+    protected static ?string $navigationGroup = "UTILITIES";
     protected static ?string $navigationLabel = "Symptoms";
 
     public static function form(Form $form): Form

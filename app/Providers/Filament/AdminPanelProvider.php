@@ -32,11 +32,11 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->sidebarCollapsibleOnDesktop(true)
-            ->sidebarWidth('250px')
+            ->sidebarWidth('275px')
             ->collapsibleNavigationGroups(false)
             ->navigationGroups([
                 'SERVICES',
-                'LIBRARIES',
+                'UTILITIES',
                 'USER MANAGEMENT',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')

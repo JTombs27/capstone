@@ -166,7 +166,7 @@
                 ASF Zoning
             </x-slot>
             <div class="col-span-12 h-[500px]"> 
-                    <iframe id="crystalReportViewer"  src="http://localhost:60308/CrystalReportMVC/ViewReport?par_value=15"  width="100%" height="100%"></iframe>
+                    <iframe id="crystalReportViewer"  src="http://localhost:60308/CrystalReportMVC/ViewReport?par_value=0"  width="100%" height="100%"></iframe>
             </div>
 
             <form  wire:submit.prevent="save()">

@@ -13,6 +13,14 @@ use BezhanSalleh\FilamentShield\Support\Utils;
 class CreateDisease extends CreateRecord
 {
     protected static string $resource = DiseaseResource::class;
+    protected static ?string $label = 'Add New Disease';
+
+
+    protected static ?string $breadcrumb = "Add New Disease";
+    public function getTitle(): string
+    {
+        return 'Register New Disease'; // ✅ Custom page title
+    }
 
     //public collection $symptoms;
     protected function mutateFormDataBeforeCreate(array $data): array

@@ -39,8 +39,8 @@ class HelplineResource extends Resource
 
     protected static ?string $navigationGroup   = "SERVICES";
     protected static ?string $navigationIcon    = 'heroicon-o-lifebuoy';
-    protected static ?string $navigationLabel   = "Animal Helpline";
-    protected static ?string $label             = "Animal Helpline";
+    protected static ?string $navigationLabel   = "Animal Disease Cases";
+    protected static ?string $label             = "Animal Disease Cases Report";
     public function getBreadcrumbs(): array
     {
         return [];
@@ -269,16 +269,16 @@ class HelplineResource extends Resource
                 //     ->getStateUsing(
                 //         fn($record) => ($record->latitude && $record->longitude) ? 'Location Set' : 'Location Not Set'
                 //     ),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
-
+            ->defaultSort('created_at', 'DESC')
             ->filters([
                 //
             ])

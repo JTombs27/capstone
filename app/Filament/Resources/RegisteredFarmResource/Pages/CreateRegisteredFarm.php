@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateRegisteredFarm extends CreateRecord
 {
     protected static string $resource = RegisteredFarmResource::class;
+
+    public function getTitle(): string
+    {
+        return 'New Farm Registration'; // ✅ Custom page title
+    }
 }

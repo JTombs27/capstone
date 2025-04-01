@@ -4,6 +4,15 @@
 
 @config './tailwind.config.js';
 
+.no-border {
+    @apply ring-0;
+    @apply shadow-none;
+}
+
+.no-border .fi-section-content {
+    @removed p-6;
+}
+
 .fi-sidebar,
 .fi-sidebar-header {
     /* background: white;

@@ -30,11 +30,11 @@
   <x-livewire-alert::scripts />
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const sections = document.querySelectorAll("section");
+            const sections = document.querySelectorAll("section.my-section");
             const navLinks = document.querySelectorAll(".nav-link");
 
             function changeActiveLink() {
-            let fromTop = window.scrollY + 150; // Adjust offset if needed
+            let fromTop = window.scrollY + 200; // Adjust offset if needed
 
             sections.forEach((section) => {
                 if (

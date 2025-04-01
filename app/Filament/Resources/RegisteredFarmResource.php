@@ -108,6 +108,7 @@ class RegisteredFarmResource extends Resource
                                                 })
                                                 ->required()->columnSpan(12),
                                             Forms\Components\Select::make('farm_barangay')
+                                                ->label("Barangay")
                                                 ->searchable()
                                                 ->options(fn($get) =>  Barangay::where('municipality_id', $get('farm_municipality'))->get()->pluck('barangay_name', 'id')->toArray())
                                                 ->columnSpan(12),
@@ -198,7 +199,7 @@ class RegisteredFarmResource extends Resource
                     ->label('First Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('owner_middle')
-                    ->label('Middel Name')
+                    ->label('Middle Name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('owner_lastname')
                     ->label('Last Name')
