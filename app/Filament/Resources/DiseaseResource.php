@@ -159,7 +159,7 @@ class DiseaseResource extends Resource
                             fn($record) => view(
                                 'livewire.report-viewer',
                                 [
-                                    'report_iframe' => "http://localhost:60308/CrystalReportMVC/ViewReport?par_value=$record->id"
+                                    'report_iframe' => "http://hris.dvodeoro.local:8048/CrystalReportMVC/ViewReport?par_value=$record->id"
                                 ]
 
                             )
