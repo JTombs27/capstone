@@ -11,7 +11,11 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Forms\Components;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\HtmlString;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Actions\ActionGroup;
@@ -26,7 +30,16 @@ class DiseaseResource extends Resource
     protected static ?string $model = Disease::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
-    protected static ?string $navigationGroup = "LIBRARIES";
+    protected static ?string $navigationGroup = "UTILITIES";
+
+    public static function getBreadcrumbs(): array
+    {
+        return [
+            'index' => 'Helpline List', // 👈 Customize the "List" page breadcrumb
+            'create' => 'Report a Case', // 👈 Customize the "Create" page breadcrumb
+            'edit' => 'Edit Case Details', // 👈 Customize the "Edit" page breadcrumb
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -38,7 +51,7 @@ class DiseaseResource extends Resource
                     ->schema([
                         Forms\Components\Checkbox::make("contigouse")
                             ->id("disease-checkbox")
-                            ->label("Contigouse Disease?")
+                            ->label("Contiguous Disease?")
                             ->inline(false)
                             ->columnspan(2),
                         Forms\Components\Select::make('animal_id')
@@ -79,15 +92,16 @@ class DiseaseResource extends Resource
                             ->reactive() // Make this field reactive
                             ->columns(4)
                             ->bulkToggleable()
-                        // ->searchable($searchable)
-                        // ->afterStateHydrated(
-                        //     fn(Component $component, string $operation, ?Model $record) => static::setPermissionStateForRecordPermissions(
-                        //         component: $component,
-                        //         operation: $operation,
-                        //         permissions: $options,
-                        //         record: $record
-                        //     )
-                        // )
+                            ->afterStateHydrated(function ($component, $state, $record) {
+                                if ($record) {
+                                    $component->state(
+                                        DB::table('disease_symptoms')
+                                            ->where('disease_id', $record->id)
+                                            ->pluck('symptom_id')
+                                            ->toArray()
+                                    );
+                                }
+                            })
                     ])
             ]);
     }
@@ -137,7 +151,22 @@ class DiseaseResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make()
+                    Action::make("Print")
+                        ->icon("heroicon-s-printer")
+                        ->color("success")
+                        ->modalWidth("3xl")
+                        ->modalContent(
+                            fn($record) => view(
+                                'livewire.report-viewer',
+                                [
+                                    'report_iframe' => "http://localhost:60308/CrystalReportMVC/ViewReport?par_value=$record->id"
+                                ]
+
+                            )
+                        )
+                        ->slideOver()
+                        ->modalAlignment(Alignment::Center),
+                    Tables\Actions\DeleteAction::make(),
                 ])
                     ->icon("heroicon-s-cog-6-tooth")
             ])

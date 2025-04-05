@@ -97,6 +97,11 @@
     @apply dark:bg-slate-800;
 }
 
+.fi-resource-list-records-page section.flex {
+    @apply pt-5;
+    @apply gap-y-4 !important;
+}
+
 .fi-sidebar-item-active svg>path {
     @apply fill-yellow-800 !important;
     @apply stroke-yellow-500 !important;
@@ -267,7 +272,12 @@ button.fi-link::before {
     @apply shadow-none;
 }
 
-.no-padding-sections-header .fi-section-header {
+.third-level-section .fi-section-header {
+    @apply py-2;
+}
+
+.no-padding-sections-header .fi-section-header,
+.third-level-section .fi-section-header {
     @apply py-2;
 }
 

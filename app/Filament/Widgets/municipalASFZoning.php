@@ -38,4 +38,22 @@ class municipalASFZoning extends BaseWidget
 
     // Override this method to remove the heading
     protected static ?string $heading = "";
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'zoom' => [
+                    'pan' => [
+                        'enabled' => true,
+                        'mode' => 'x', // Horizontal panning
+                    ],
+                    'zoom' => [
+                        'enabled' => true,
+                        'mode' => 'x', // Zoom along x-axis
+                    ],
+                ],
+            ],
+        ];
+    }
 }

@@ -2,3 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+.duration-300 {
+    transition-duration: .3s;
+}
+
+.no-border {
+    @apply ring-0;
+    @apply shadow-none;
+}
+
+.no-border .fi-section-content {
+    @apply p-0;
+}
+
+.no-border .fi-section-header {
+    @apply px-0;
+}
+
+.no-border .fi-section-content .fi-section-content {
+    @apply py-3;
+}
+
+form>div.fi-fo-component-ctn {
+    @apply gap-y-1 !important;
+}
+
+.fi-section-header {
+    @apply py-2 !important;
+}
+
+.third-level-section .fi-section-header {
+    @apply py-2 !important;
+    @apply gap-1 !important;
+}
+
+.my-content .fi-section-content>div {
+    @apply gap-y-2 !important;
+}
+
+.my-content .fi-section-header {
+    @apply py-2;
+}
+
+.my-level2-content .fi-section-content>div {
+    @apply gap-1;
+}
+
+/* .no-border .fi-fo-field-wrp {
+    @apply;
+} */
+
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(.4, 0, .2, 1);
+    transition-duration: .15s;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.nav-link {
+    color: gray;
+    transition: color 0.3s;
+}
+
+.nav-link.active {
+    color: blue;
+    /* Change color when section is active */
+    font-weight: bold;
+}

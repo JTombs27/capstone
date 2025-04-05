@@ -21,7 +21,7 @@
                             <div></div>
                             <button type="submit" 
                                 class="bg-green-500 sm w-full p-3 rounded-lg text-lg text-white hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                                :disabled="!$wire.agree">
+                                >
                                 <b>SUBMIT APPLICATION</b>
                             </button>
                         </div>
