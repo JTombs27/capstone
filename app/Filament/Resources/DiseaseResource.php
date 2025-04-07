@@ -63,7 +63,7 @@ class DiseaseResource extends Resource
                             ->afterStateUpdated(fn(callable $set) => $set('diseasesymptoms', []))
                             ->required()
                             ->columnspan(4),
-                        Forms\Components\Textinput::make('disease_description')
+                        Forms\Components\TextInput::make('disease_description')
                             ->label("Diseas Description")
                             ->required()
                             ->columnspan(4),
