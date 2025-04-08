@@ -24,7 +24,7 @@ class ListDiseases extends ListRecords
                     fn($record) => view(
                         'livewire.report-viewer',
                         [
-                            'report_iframe' => "http://hris.dvodeoro.local:8048/CrystalReportMVC/ViewReport?par_value=0"
+                            'report_iframe' => "http://hris.dvodeoro.ph:452/CrystalReportMVC/ViewReport?par_value=0"
                         ]
 
                     )
