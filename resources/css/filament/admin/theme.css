@@ -376,3 +376,45 @@ button.fi-link::before {
     @apply text-custom-400;
     @apply ring-custom-400/30;
 }
+
+.no-border {
+    @apply ring-0;
+    @apply shadow-none;
+}
+
+.no-border .fi-section-content {
+    @apply p-0;
+}
+
+.no-border .fi-section-header {
+    @apply px-0;
+}
+
+.no-border .fi-section-content .fi-section-content {
+    @apply py-3;
+}
+
+form>div.fi-fo-component-ctn {
+    @apply gap-y-1 !important;
+}
+
+.fi-section-header {
+    @apply py-2 !important;
+}
+
+.third-level-section .fi-section-header {
+    @apply py-2 !important;
+    @apply gap-1 !important;
+}
+
+.my-content .fi-section-content>div {
+    @apply gap-y-2 !important;
+}
+
+.my-content .fi-section-header {
+    @apply py-2;
+}
+
+.my-level2-content .fi-section-content>div {
+    @apply gap-1;
+}

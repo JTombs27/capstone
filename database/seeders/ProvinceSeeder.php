@@ -1,0 +1,95 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class ProvinceSeeder extends Seeder
+{
+    public function run()
+    {
+        $provinces = [
+            ['region' => 'CAR', 'province_name' => 'Abra'],
+            ['region' => 'CAR', 'province_name' => 'Apayao'],
+            ['region' => 'CAR', 'province_name' => 'Benguet'],
+            ['region' => 'CAR', 'province_name' => 'Ifugao'],
+            ['region' => 'CAR', 'province_name' => 'Kalinga'],
+            ['region' => 'CAR', 'province_name' => 'Mountain Province'],
+            ['region' => 'I', 'province_name' => 'Ilocos Norte'],
+            ['region' => 'I', 'province_name' => 'Ilocos Sur'],
+            ['region' => 'I', 'province_name' => 'La Union'],
+            ['region' => 'I', 'province_name' => 'Pangasinan'],
+            ['region' => 'II', 'province_name' => 'Batanes'],
+            ['region' => 'II', 'province_name' => 'Cagayan'],
+            ['region' => 'II', 'province_name' => 'Isabela'],
+            ['region' => 'II', 'province_name' => 'Nueva Vizcaya'],
+            ['region' => 'II', 'province_name' => 'Quirino'],
+            ['region' => 'III', 'province_name' => 'Aurora'],
+            ['region' => 'III', 'province_name' => 'Bataan'],
+            ['region' => 'III', 'province_name' => 'Bulacan'],
+            ['region' => 'III', 'province_name' => 'Nueva Ecija'],
+            ['region' => 'III', 'province_name' => 'Pampanga'],
+            ['region' => 'III', 'province_name' => 'Tarlac'],
+            ['region' => 'III', 'province_name' => 'Zambales'],
+            ['region' => 'IV-A', 'province_name' => 'Batangas'],
+            ['region' => 'IV-A', 'province_name' => 'Cavite'],
+            ['region' => 'IV-A', 'province_name' => 'Laguna'],
+            ['region' => 'IV-A', 'province_name' => 'Quezon'],
+            ['region' => 'IV-A', 'province_name' => 'Rizal'],
+            ['region' => 'IV-B', 'province_name' => 'Marinduque'],
+            ['region' => 'IV-B', 'province_name' => 'Occidental Mindoro'],
+            ['region' => 'IV-B', 'province_name' => 'Oriental Mindoro'],
+            ['region' => 'IV-B', 'province_name' => 'Palawan'],
+            ['region' => 'IV-B', 'province_name' => 'Romblon'],
+            ['region' => 'V', 'province_name' => 'Albay'],
+            ['region' => 'V', 'province_name' => 'Camarines Norte'],
+            ['region' => 'V', 'province_name' => 'Camarines Sur'],
+            ['region' => 'V', 'province_name' => 'Catanduanes'],
+            ['region' => 'V', 'province_name' => 'Masbate'],
+            ['region' => 'V', 'province_name' => 'Sorsogon'],
+            ['region' => 'VI', 'province_name' => 'Aklan'],
+            ['region' => 'VI', 'province_name' => 'Antique'],
+            ['region' => 'VI', 'province_name' => 'Capiz'],
+            ['region' => 'VI', 'province_name' => 'Iloilo'],
+            ['region' => 'VI', 'province_name' => 'Negros Occidental'],
+            ['region' => 'VII', 'province_name' => 'Bohol'],
+            ['region' => 'VII', 'province_name' => 'Cebu'],
+            ['region' => 'VII', 'province_name' => 'Negros Oriental'],
+            ['region' => 'VII', 'province_name' => 'Siquijor'],
+            ['region' => 'VIII', 'province_name' => 'Biliran'],
+            ['region' => 'VIII', 'province_name' => 'Eastern Samar'],
+            ['region' => 'VIII', 'province_name' => 'Leyte'],
+            ['region' => 'VIII', 'province_name' => 'Northern Samar'],
+            ['region' => 'VIII', 'province_name' => 'Samar'],
+            ['region' => 'VIII', 'province_name' => 'Southern Leyte'],
+            ['region' => 'IX', 'province_name' => 'Zamboanga del Norte'],
+            ['region' => 'IX', 'province_name' => 'Zamboanga del Sur'],
+            ['region' => 'IX', 'province_name' => 'Zamboanga Sibugay'],
+            ['region' => 'X', 'province_name' => 'Bukidnon'],
+            ['region' => 'X', 'province_name' => 'Camiguin'],
+            ['region' => 'X', 'province_name' => 'Lanao del Norte'],
+            ['region' => 'X', 'province_name' => 'Misamis Occidental'],
+            ['region' => 'X', 'province_name' => 'Misamis Oriental'],
+            ['region' => 'XI', 'province_name' => 'Davao de Oro'],
+            ['region' => 'XI', 'province_name' => 'Davao del Norte'],
+            ['region' => 'XI', 'province_name' => 'Davao del Sur'],
+            ['region' => 'XI', 'province_name' => 'Davao Occidental'],
+            ['region' => 'XI', 'province_name' => 'Davao Oriental'],
+            ['region' => 'XII', 'province_name' => 'Cotabato'],
+            ['region' => 'XII', 'province_name' => 'Sarangani'],
+            ['region' => 'XII', 'province_name' => 'South Cotabato'],
+            ['region' => 'XII', 'province_name' => 'Sultan Kudarat'],
+            ['region' => 'XII', 'province_name' => 'General Santos'],
+            ['region' => 'XIII', 'province_name' => 'Agusan del Norte'],
+            ['region' => 'XIII', 'province_name' => 'Agusan del Sur'],
+            ['region' => 'XIII', 'province_name' => 'Dinagat Islands'],
+            ['region' => 'XIII', 'province_name' => 'Surigao del Norte'],
+            ['region' => 'XIII', 'province_name' => 'Surigao del Sur'],
+            ['region' => 'CARAGA', 'province_name' => 'Butuan City'],
+            // Add other provinces as needed
+        ];
+
+        DB::table('provinces')->insert($provinces);
+    }
+}

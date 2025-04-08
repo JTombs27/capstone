@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(
             [
                 BarangaysTableSeeder::class,
-                Municipalities::class
+                Municipalities::class,
+                ProvinceSeeder::class
             ]
         );
         // \App\Models\User::factory(10)->create();

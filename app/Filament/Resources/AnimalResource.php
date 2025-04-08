@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\AnimalResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\AnimalResource\RelationManagers;
+use Filament\Pages\Page;
 
 class AnimalResource extends Resource
 {
@@ -62,7 +63,16 @@ class AnimalResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageAnimals::route('/'),
+            'index' => Pages\ListAnimals::route('/'),
+            'create' => Pages\CreateAnimal::route('/create'),
+            'edit' => Pages\EditAnimal::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\SymptomsRelationManagerRelationManager::class
         ];
     }
 }

@@ -10,4 +10,9 @@ class Municipality extends Model
     use HasFactory;
     protected $table    = "municipalities";
     protected $guarded  = [];
+
+    public function province()
+    {
+        $this->belongsTo(Province::class, "province_id", "id");
+    }
 }

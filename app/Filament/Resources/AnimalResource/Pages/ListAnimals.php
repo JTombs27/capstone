@@ -4,9 +4,9 @@ namespace App\Filament\Resources\AnimalResource\Pages;
 
 use App\Filament\Resources\AnimalResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\ListRecords;
 
-class ManageAnimals extends ManageRecords
+class ListAnimals extends ListRecords
 {
     protected static string $resource = AnimalResource::class;
 

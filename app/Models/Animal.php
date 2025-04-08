@@ -10,4 +10,9 @@ class Animal extends Model
     use HasFactory;
     protected $table    = "animals";
     protected $guarded  = [];
+
+    public function SymptomsRelationManager()
+    {
+        return $this->hasMany(Symptom::class, "animal_id", "id");
+    }
 }

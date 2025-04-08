@@ -4,12 +4,14 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Province;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\Municipality;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MunicipalityResource\Pages;
@@ -20,12 +22,20 @@ class MunicipalityResource extends Resource
     protected static ?string $model = Municipality::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    protected static ?string $navigationGroup = "USER MANAGEMENT";
+    protected static ?string $navigationGroup =  "USER MANAGEMENT";
+    protected static ?int $navigationSort       = 1;
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 //
+                Forms\Components\Select::make('province_id')
+                    ->label("Province")
+                    ->options(Province::all()->pluck('province_name', 'id'))
+                    ->searchable()
+                    ->native(false)
+                    ->required()
+                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('municipality_name')
                     ->required()
                     ->maxLength(255)
@@ -64,6 +74,11 @@ class MunicipalityResource extends Resource
             ])
             ->filters([
                 //
+                SelectFilter::make("province_id")
+                    ->native(false)
+                    ->searchable()
+                    ->label("Filter By Province")
+                    ->options(Province::all()->pluck('province_name', 'id'))
             ])
 
             ->actions([

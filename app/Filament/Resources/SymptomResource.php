@@ -22,6 +22,11 @@ class SymptomResource extends Resource
     protected static ?string $navigationGroup = "UTILITIES";
     protected static ?string $navigationLabel = "Symptoms";
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

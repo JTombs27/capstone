@@ -19,8 +19,9 @@ class BarangayResource extends Resource
 {
     protected static ?string $model = Barangay::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-library';
-    protected static ?string $navigationGroup = "USER MANAGEMENT";
+    protected static ?string $navigationIcon    = 'heroicon-o-building-library';
+    protected static ?string $navigationGroup   = "USER MANAGEMENT";
+    protected static ?int $navigationSort       = 2;
     public static function form(Form $form): Form
     {
         return $form
