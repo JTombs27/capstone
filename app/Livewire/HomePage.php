@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Illuminate\Support\Arr;
 use App\Models\Municipality;
 use Livewire\Attributes\Url;
+use Illuminate\Support\Carbon;
 use Livewire\Attributes\Title;
 use App\Models\HelplineSymptom;
 use Dotswan\MapPicker\Fields\Map;
@@ -409,6 +410,7 @@ class HomePage extends Component implements HasForms
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        $data['date_reported'] = Carbon::now()->format('Y-m-d H:i:s');
         $this->symptoms = array_map(function ($symptom) {
             return ['symptom_id' => $symptom];
         }, $data['diseasesymptoms'] ?? []);

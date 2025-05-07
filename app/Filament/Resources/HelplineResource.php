@@ -39,6 +39,8 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Filament\Resources\HelplineResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HelplineResource\RelationManagers;
+use DateTime;
+use Filament\Forms\Components\DateTimePicker;
 use Livewire\Livewire as LivewireMount;
 
 
@@ -98,7 +100,6 @@ class HelplineResource extends Resource
                                             ->mask('09999999999') // Mask format for PH mobile numbers
                                             ->regex('/^(\+63|0)9\d{9}$/') // Validates PH numbers
                                             ->inlineLabel()
-                                            ->required()
                                             ->maxLength(255)
                                             ->columnSpan(12),
                                     ])
@@ -161,7 +162,6 @@ class HelplineResource extends Resource
                                             ->mask('09999999999') // Mask format for PH mobile numbers
                                             ->regex('/^(\+63|0)9\d{9}$/') // Validates PH numbers
                                             ->inlineLabel()
-                                            ->required()
                                             ->maxLength(255)
                                             ->columnSpan(12)
                                             ->disabled(fn(callable $get) => $get('same_as_reporter'))
@@ -243,22 +243,7 @@ class HelplineResource extends Resource
                                     ->showFullscreenControl()
                                     ->showZoomControl()
                                     ->tilesUrl("https://tile.openstreetmap.de/{z}/{x}/{y}.png")
-                                    //->tilesUrl("http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}")
                                     ->zoom(10)
-                                    // ->detectRetina()
-                                    // // ->showMyLocationButton()
-                                    // ->geoMan()
-                                    // ->geoManEditable(false)
-                                    // ->geoManPosition('topleft')
-                                    // ->drawCircleMarker()
-                                    // ->rotateMode()
-                                    // ->drawPolygon()
-                                    // ->drawPolyline()
-                                    // ->drawCircle()
-                                    // ->dragMode()
-                                    // ->cutPolygon()
-                                    // ->editPolygon()
-                                    // ->deleteLayer()
                                     ->setColor('#3388ff')
                                     ->setFilledColor('#cad9ec')
                             ])
@@ -287,27 +272,49 @@ class HelplineResource extends Resource
                                     ->required()
                                     ->inlineLabel()
                                     ->columnSpan(12),
-                                TextInput::make('affected_count')
-                                    ->label(new HtmlString("Pila Apiktado"))
+                                DateTimePicker::make('date_reported')
+                                    ->label(new HtmlString("Reported date"))
                                     ->required()
                                     ->inlineLabel()
-                                    ->numeric()
-                                    ->mask("9999")
-                                    ->maxLength(10)
-                                    ->columnSpan(12),
-                                TextInput::make('death_count')
-                                    ->label(new HtmlString("Pila Patay"))
-                                    ->required()
-                                    ->inlineLabel()
-                                    ->numeric()
-                                    ->mask("9999")
-                                    ->maxLength(10)
                                     ->columnSpan(12),
                                 Textarea::make('other_info')
                                     ->label(new HtmlString("Dugang Impormasyon"))
                                     ->rows(3)
                                     ->inlineLabel()
                                     ->columnspan(12),
+                                TextInput::make('affected_count')
+                                    ->label(new HtmlString("Pila Apiktado"))
+                                    ->required()
+                                    //->inlineLabel()
+                                    ->numeric()
+                                    ->mask("9999")
+                                    ->maxLength(10)
+                                    ->columnSpan(3),
+                                TextInput::make('death_count')
+                                    ->label(new HtmlString("Pila Patay"))
+                                    ->required()
+                                    //->inlineLabel()
+                                    ->numeric()
+                                    ->mask("9999")
+                                    ->maxLength(10)
+                                    ->columnSpan(3),
+                                TextInput::make('sample_count')
+                                    ->label(new HtmlString("Sample Count"))
+                                    ->required()
+                                    //->inlineLabel()
+                                    ->numeric()
+                                    ->mask("9999")
+                                    ->maxLength(10)
+                                    ->columnSpan(3),
+                                TextInput::make('positive_count')
+                                    ->label(new HtmlString("Nag positibo"))
+                                    ->required()
+                                    //->inlineLabel()
+                                    ->numeric()
+                                    ->mask("9999")
+                                    ->maxLength(10)
+                                    ->columnSpan(3),
+
                             ])
                             ->extraAlpineAttributes(['class' => 'no-border my-content'])
                             ->columns(12)

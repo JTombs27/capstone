@@ -34,16 +34,17 @@ class EditHelpline extends EditRecord
 
 
 
-    protected function handleRecordCreation(array $data): Model
+    protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $disease = static::getModel()::create($data); // Create disease record
+        $record->update($data); // Update disease record
 
-        // Ensure that symptoms are stored properly
+        // Sync related disease symptoms (delete old and insert new ones)
         if (!empty($this->symptoms)) {
-            $disease->helplineSymptoms()->createMany($this->symptoms);
+            $record->helplineSymptoms()->delete(); // Remove old symptoms
+            $record->helplineSymptoms()->createMany($this->symptoms);
         }
 
-        return $disease;
+        return $record;
     }
 
 
