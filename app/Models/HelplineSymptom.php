@@ -12,6 +12,16 @@ class HelplineSymptom extends Model
 
     public function symptoms()
     {
-        $this->belongsTo(Symptom::class, "symptom_id", "id");
+        return $this->belongsTo(Symptom::class, "symptom_id", "id");
+    }
+
+    public function Symptomx()
+    {
+        return  $this->belongsTo(Symptom::class, "symptom_id", "id");
+    }
+
+    public function helpline()
+    {
+        return $this->belongsTo(Helpline::class, "helpline_id", "id");
     }
 }

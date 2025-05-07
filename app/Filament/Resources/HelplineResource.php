@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use livewire;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Animal;
@@ -29,6 +30,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Forms\Components\CheckboxList;
@@ -36,6 +39,8 @@ use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Filament\Resources\HelplineResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HelplineResource\RelationManagers;
+use Livewire\Livewire as LivewireMount;
+
 
 class HelplineResource extends Resource
 {
@@ -352,45 +357,63 @@ class HelplineResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('first_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('last_name')
+                Tables\Columns\TextColumn::make('municipal.municipality_name')
+                    ->label("📍 Address Location")
+                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 120px;'])
+                    ->getStateUsing(fn($record) => "<small><b>" . $record->barangay->barangay_name . '</b></small>, <small><i>' . $record->municipal->municipality_name  . '</i></small>')
+                    ->html()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_number')
+                    ->label(new HtmlString("📞 Contact#"))
+                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 120px;'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('animal.animal_name')
+                    ->label(new HtmlString("Animal"))
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->searchable(),
                 Tables\Columns\TextColumn::make('disease.disease_description')
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->label("Disease")
                     ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('helplineSymptoms.Symptomx.symptom_descr')
+                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
+                    ->label("Reported Symptoms")
+                    ->searchable()
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    //->bulleted()
+                    ->wrap(),
+
                 Tables\Columns\TextColumn::make('status')
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->getStateUsing(
-                        fn($record) => ($record->latitude && $record->longitude) ? $record->status . '- Location Set' : $record->status . ' -Location Not Set'
+                        fn($record) =>
+                        "<small> Active Status: " . $record->status
+                            . "<br/>Disease Start Date: " . $record->start_date . ""
+                            . "<br/>Reported Date: " . $record->created_at->format('Y-m-d h:ia') . "</small>"
+
                     )
+                    ->html()
                     ->searchable(),
-                // Tables\Columns\TextColumn::make('location')
-                //     ->label('Location')
-                //     ->getStateUsing(
-                //         fn($record) => ($record->latitude && $record->longitude) ? 'Location Set' : 'Location Not Set'
-                //     ),
-                // Tables\Columns\TextColumn::make('created_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
-                // Tables\Columns\TextColumn::make('updated_at')
-                //     ->dateTime()
-                //     ->sortable()
-                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'DESC')
             ->filters([
-                //
+                // SelectFilter::make('status')
+                //     ->options([
+                //         'Monitored' => 'Monitored',
+                //         'reviewing' => 'Reviewing',
+                //         'published' => 'Published',
+                //     ])
+                //     ->default('Monitored')
             ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\ViewAction::make()
+                        ->modalWidth("5xl")
+                        ->closeModalByClickingAway(false)
                         ->form([
                             Section::make('')
                                 ->schema([
@@ -581,8 +604,8 @@ class HelplineResource extends Resource
                                 ->columns(12)
                                 ->extraAlpineAttributes(['class' => 'no-padding-sections-header']),
 
-                        ])
-                        ->slideOver(),
+                        ]),
+                    // ->slideOver(),
                     Tables\Actions\DeleteAction::make(),
                     Action::make("set_location")
                         ->icon("heroicon-s-map")
@@ -649,8 +672,7 @@ class HelplineResource extends Resource
                             $record->latitude = $data["location"]["lat"];
                             $record->longitude = $data["location"]["lng"];
                             $record->save();
-                        })
-                        ->slideOver(),
+                        }),
                     Action::make('status')
                         ->label("Set Status")
                         ->icon("heroicon-s-signal")
@@ -689,6 +711,24 @@ class HelplineResource extends Resource
                                         ->toArray();
                                 })
                         ])
+                        ->modalContent(function ($record) {
+                            $diseases = Disease::where('animal_id', $record->animal_id)
+
+                                ->get();
+
+                            $chartData = [
+                                'labels' => ["tesst", "test2", "test3"],
+                                'datasets' => [[
+                                    'label' => 'Disease Reports',
+                                    'data' => [2, 10, 11],
+                                    'backgroundColor' => '#3B82F6',
+                                ]]
+                            ];
+
+                            return view('filament.modals.disease-bar-chart', [
+                                'chartData' => $chartData,
+                            ]);
+                        })
 
                         ->modalWidth("md")
                         ->action(function (array $data, $record) {

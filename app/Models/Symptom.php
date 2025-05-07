@@ -20,4 +20,9 @@ class Symptom extends Model
     {
         return $this->belongsTo(Animal::class, "animal_id", "id");
     }
+
+    public function helplineSymptoms()
+    {
+        return $this->hasMany(HelplineSymptom::class, 'symptom_id', 'id');
+    }
 }
