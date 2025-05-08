@@ -24,36 +24,42 @@
         <div class="absolute top-[130px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             {{-- <h4 class="font-bold mb-[2px]">Testing</h4> --}}
             <div class="col-span-12 gap-y-4">
-                <div class="grid grid-cols-12">
+                 <div class="grid grid-cols-12 mb-[10px]">
+                    <div class="col-span-12">
+                       <b>Display Options</b>
+                    </div>
+                </div>
+                <div class="grid grid-cols-12 mb-[10px]">
                     <label class="col-span-12 grid grid-cols-12">
-                        <div class="col-span-10">
+                        <div class="col-span-11">
                         View Heatmap
                         </div>
-                        <div class="col-span-2"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                        <div class="col-span-1"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
                     </label>
                 </div>
-                <div class="grid grid-cols-12">
+                <hr />
+                <div class="grid grid-cols-12 mt-[10px]">
                     <label class="col-span-12 grid grid-cols-12">
-                        <div class="col-span-10">
+                        <div class="col-span-11">
                        Show All Farms
                         </div>
-                        <div class="col-span-2"><input type="checkbox" name="option" value="1" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                        <div class="col-span-1"><input type="checkbox" name="option" value="all" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
                     </label>
                 </div>
                 <div class="grid grid-cols-12">
                     <label class="col-span-12 grid grid-cols-12">
-                        <div class="col-span-10">
+                        <div class="col-span-11">
                       Poultry Farms
                         </div>
-                        <div class="col-span-2"><input type="checkbox" name="option" value="2" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                        <div class="col-span-1"><input type="checkbox" name="option" value="Manok" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
                     </label>
                 </div>
                  <div class="grid grid-cols-12">
                     <label class="col-span-12 grid grid-cols-12">
-                        <div class="col-span-10">
+                        <div class="col-span-11">
                      Swine Farms
                         </div>
-                        <div class="col-span-2"><input type="checkbox" name="option" value="3" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                        <div class="col-span-1"><input type="checkbox" name="option" value="Baboy" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
                     </label>
                 </div>
             </div>
@@ -99,7 +105,7 @@
                 
             
                 var allFarmType = L.layerGroup(); 
-                var data = @json($this->getFarms());
+                var data        = @json($this->getFarms());
                 var baboyan     = L.layerGroup();
                 var manokan     = L.layerGroup();
                 const diseaseLayers = L.layerGroup();
@@ -230,12 +236,32 @@
                         });
                
       
-                function showFarms() {
-                    if (map.hasLayer(allFarmType)) 
+                function showFarms(farm_type,checkD) 
+                {
+                    if(!checkD)
                     {
                         allFarmType.removeFrom(map);
-                    } else {
+                        baboyan.removeFrom(map);
+                        manokan.removeFrom(map);
+                        return;
+                    }
+
+                    if (farm_type == "all") 
+                    {
+                        baboyan.removeFrom(map);
+                        manokan.removeFrom(map);
                         allFarmType.addTo(map);
+                    } else  if (farm_type == "Baboy") 
+                    {
+                        allFarmType.removeFrom(map);
+                        manokan.removeFrom(map);
+                        baboyan.addTo(map);
+                    }
+                      else  if (farm_type == "Manok") 
+                    {
+                        allFarmType.removeFrom(map);
+                        baboyan.removeFrom(map);
+                        manokan.addTo(map);
                     }
                 }
 
@@ -271,8 +297,7 @@
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 
                     {
-                        
-                        showFarms();
+                        showFarms(this.value,this.checked);
                         if (this.checked) 
                         {
                             document.querySelectorAll('.single-checkbox').forEach(other => 
