@@ -16,7 +16,10 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "heatmap.js": "^2.0.5",
         "leaflet": "^1.9.4",
+        "leaflet-heatmap": "^1.0.0",
+        "leaflet.heat": "^0.2.0",
         "preline": "^2.7.0"
     }
 }

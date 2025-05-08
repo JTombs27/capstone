@@ -37,8 +37,6 @@ class EditHelpline extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data); // Update disease record
-
-        // Sync related disease symptoms (delete old and insert new ones)
         if (!empty($this->symptoms)) {
             $record->helplineSymptoms()->delete(); // Remove old symptoms
             $record->helplineSymptoms()->createMany($this->symptoms);
