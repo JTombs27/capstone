@@ -23,14 +23,39 @@
         </div>
         <div class="absolute top-[130px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             {{-- <h4 class="font-bold mb-[2px]">Testing</h4> --}}
-            <div class="col-lg-12">
-                <label class="flex items-center space-x-2 gap-4">
-                    <span>Show all Farms</span>
-                    <input type="checkbox" id="showFarmsButton"  name="accept_terms" class="form-checkbox text-primary-600">
-                </label>
-                <label class="flex items-center space-x-2 gap-x-4"><span>Option 1</span><input type="checkbox" name="option" value="1" class="form-checkbox text-primary-600"></label>
-                <label class="flex items-center space-x-2 gap-x-4"><span>Option 2</span><input type="checkbox" name="option" value="2" class="form-checkbox text-primary-600"></label>
-                <label class="flex items-center space-x-2 gap-x-4"><span>Option 3</span><input type="checkbox" name="option" value="3" class="form-checkbox text-primary-600"></label>
+            <div class="col-span-12 gap-y-4">
+                <div class="grid grid-cols-12">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-10">
+                        View Heatmap
+                        </div>
+                        <div class="col-span-2"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                    </label>
+                </div>
+                <div class="grid grid-cols-12">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-10">
+                       Show All Farms
+                        </div>
+                        <div class="col-span-2"><input type="checkbox" name="option" value="1" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                    </label>
+                </div>
+                <div class="grid grid-cols-12">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-10">
+                      Poultry Farms
+                        </div>
+                        <div class="col-span-2"><input type="checkbox" name="option" value="2" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                    </label>
+                </div>
+                 <div class="grid grid-cols-12">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-10">
+                     Swine Farms
+                        </div>
+                        <div class="col-span-2"><input type="checkbox" name="option" value="3" class="form-checkbox text-primary-600 single-checkbox right-0"></div>
+                    </label>
+                </div>
             </div>
         </div>
     @push('scripts')
@@ -71,7 +96,7 @@
                         maxZoom: 15
                 });
 
-      
+                
             
                 var allFarmType = L.layerGroup(); 
                 var data = @json($this->getFarms());
@@ -195,17 +220,16 @@
                                             });
                                     }
                                 }
-                            }).addTo(map);
+                            })
+                            .addTo(map);
 
                             
                         })
                         .catch(error => {
                             console.error("Error loading GeoJSON:", error);
                         });
-                heatLayer.addTo(map);
-                const canvas = heatLayer._heat._canvas;
-                canvas.willReadFrequently = true;
-
+               
+      
                 function showFarms() {
                     if (map.hasLayer(allFarmType)) 
                     {
@@ -215,11 +239,40 @@
                     }
                 }
 
-                document.getElementById('showFarmsButton').addEventListener('click', showFarms);
+                function showDiseaseCaseHeatMap()
+                {
+                     if (map.hasLayer(heatLayer)) 
+                        {
+                            //geoJsonLayerMunicipality.addTo(map);
+                             heatLayer.removeFrom(map);
+                        }
+                    else{
+                            //geoJsonLayerMunicipality.removeFrom(map);
+                            heatLayer.addTo(map);
+                            const canvas                = heatLayer._heat._canvas;
+                            canvas.willReadFrequently   = true;
+                            heatData.forEach(point => 
+                            {
+                                L.circleMarker([point[0], point[1]], {
+                                    radius: 10,
+                                    color: 'transparent',
+                                    fillOpacity: 0
+                                })
+                                .on('click', () => {
+                                    window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: 4 }));
+                                })
+                                .addTo(map);
+                            });
+                    }
+                  
+                }
+
+                document.getElementById('showHeatMapButton').addEventListener('click', showDiseaseCaseHeatMap);
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 
                     {
                         
+                        showFarms();
                         if (this.checked) 
                         {
                             document.querySelectorAll('.single-checkbox').forEach(other => 
@@ -231,6 +284,8 @@
                         }
                     });
                     });
+                showDiseaseCaseHeatMap();
+                document.getElementById('showHeatMapButton').checked = true;
 
         });
         
