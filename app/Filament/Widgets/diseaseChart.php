@@ -46,7 +46,8 @@ class diseaseChart extends ChartWidget
         // Retrieve data: Group by month and disease type
         $diseaseCases = DB::table('helplines')
             ->Join('diseases', 'diseases.id', 'helplines.disease_id')
-            ->selectRaw('DATE_FORMAT(helplines.created_at, "%Y-%m") as monthX,MONTHNAME(helplines.created_at) as month, diseases.disease_description, COUNT(*) as total_cases')
+            ->selectRaw('DATE_FORMAT(helplines.date_reported, "%Y-%m") as monthX,MONTHNAME(helplines.date_reported) as month, diseases.disease_description, COUNT(*) as total_cases')
+            ->where(DB::raw("year(helplines.date_reported)"),2025)
             ->groupBy('month', 'monthX', 'diseases.disease_description')
             ->orderBy('monthX')
             ->get();

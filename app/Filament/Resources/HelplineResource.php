@@ -381,7 +381,7 @@ class HelplineResource extends Resource
                 Tables\Columns\TextColumn::make('disease.disease_description')
                     ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->label("Disease")
-                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease')
+                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease'.$record->other_info)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('helplineSymptoms.Symptomx.symptom_descr')
                     ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
@@ -399,13 +399,14 @@ class HelplineResource extends Resource
                         fn($record) =>
                         "<small> Active Status: " . $record->status
                             . "<br/>Disease Start Date: " . $record->start_date . ""
-                            . "<br/>Reported Date: " . $record->created_at->format('Y-m-d h:ia') . "</small>"
+                            . "<br/>Reported Date: " . $record->date_reported . "</small>"
 
                     )
                     ->html()
                     ->searchable(),
             ])
             ->defaultSort('created_at', 'DESC')
+            ->defaultSort('date_reported', 'DESC')
             ->filters([
                 // SelectFilter::make('status')
                 //     ->options([

@@ -9,49 +9,33 @@
         .fi-main { padding: 0 !important;}
     </style>
      <div class="md:col-span-12 lg:col-span-12 col-span-12" wire:ignore>
-        {{-- <div class="shadow p-x-4 p-y-2 bg-slate-900" style="border-radius: 10px 10px 0px 0px;">
-            <h5 class="font-bold text-gray-700 text-white">
-                    Geographic Information System
-            </h5>
-        </div> --}}
         <div class="shadow bg-slate-900 z-10 col-span-12 grid grid-cols-12 h-svh w-full"  id="map" ></div>
-
-        {{-- <div class="absolute bottom-20 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[600px]" style="font-size: 12px;">
-            <h4 class="font-bold mb-[2px]">Filters</h4>
-            <div>
-                <label class="inline mb-1">Year :</label>
-                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
-                    @foreach ($years as $year)
-                        <option value="{{ $year }}">{{ $year }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="inline mb-1">Select Category:</label>
-                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
-                    <option value="">All</option>
-                    <option value="1">Category 1</option>
-                    <option value="2">Category 2</option>
-                </select>
-            </div>
-        </div> --}}
-        <div class="absolute top-4 left-4 z-20 bg-white p-4 rounded-lg shadow-lg grid grid-cols-12 w-[500px] gap-x-2" style="font-size: 12px;">
-            <h4 class="font-bold mb-[2px] col-span-2  pt-2">Filters</h4>
-            <div class="col-span-4 grid grid-cols-12 gap-x-2">
-                <label class="col-span-3 inline mb-1 pt-2">Year: </label>
-                <div class="col-span-9">
-                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
-                    <option value="">All</option>
+        <div class="absolute top-20 left-4 z-20 bg-white p-4 rounded-lg shadow-lg grid grid-cols-12 w-[700px] gap-x-2" style="font-size: 12px;">
+            <h4 class="font-bold mb-[2px] col-span-1  pt-2">Filters</h4>
+            <div class="col-span-3 grid grid-cols-12 gap-x-2">
+                <label class="col-span-4 inline mb-1 pt-2 text-right">From: </label>
+                <div class="col-span-8">
+                <select id="filter_year_from" class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
                     @foreach ($years as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
                     @endforeach
                 </select>
                 </div>
             </div>
-           <div class="col-span-6 grid grid-cols-12 gap-x-2">
-                <label class="col-span-5 inline mb-1 pt-2">Municipality: </label>
-                <div class="col-span-7">
-                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+            <div class="col-span-3 grid grid-cols-12 gap-x-2">
+                <label class="col-span-4 inline mb-1 pt-2 text-right">To: </label>
+                <div class="col-span-8">
+                <select id="filter_year_to" class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+                </div>
+            </div>
+           <div class="col-span-5 grid grid-cols-12 gap-x-2">
+                <label class="col-span-4 inline mb-1 pt-2">Municipality: </label>
+                <div class="col-span-8">
+                <select id="filter_municipality" class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
                     <option value="">All</option>
                      @foreach ($this->municipalities as $municipalities)
                         <option value="{{ $municipalities->municipality_name }}">{{ $municipalities->municipality_name }}</option>
@@ -60,7 +44,7 @@
                 </div>
             </div>
         </div>
-        <div class="absolute top-[90px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
+        <div class="absolute top-[155px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             {{-- <h4 class="font-bold mb-[2px]">Testing</h4> --}}
             <div class="col-span-12 gap-y-4">
                  <div class="grid grid-cols-12 mb-[10px]">
@@ -124,6 +108,10 @@
        
         document.addEventListener('DOMContentLoaded', function () 
             {
+                const currentYear = new Date().getFullYear();
+                document.getElementById('filter_year_from').addEventListener('change', showDiseaseCaseHeatMap);
+                document.getElementById('filter_year_from').value   = 2000;
+                document.getElementById('filter_year_to').value     = currentYear;
                  var googleStreets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
                     maxZoom: 15,
                     minZoom: 7,  
@@ -197,8 +185,10 @@
 
                     allFarmType.addLayer(marker);
                 });
+                var year_from   = document.getElementById('filter_year_from').value;
+                var year_to     = document.getElementById('filter_year_to').value;   
+                var monitoredDiseases = @json($this->getDiseaseMonitored(2000,2025));
 
-                var monitoredDiseases   = @json($this->getDiseaseMonitored());
                 var municipalities      = @json($this->getMunicipalities());
                 var geoJsonLayerMunicipality;
                 var currentOpacity      = 0.2;
@@ -423,7 +413,7 @@
                                     fillOpacity: 0
                                 })
                                 .on('click', () => {
-                                    window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: 4 }));
+                                    window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: {details : monitoredDiseases[3]} }));
                                 })
                                 .addTo(map);
                             });

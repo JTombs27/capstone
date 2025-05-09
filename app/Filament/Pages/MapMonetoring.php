@@ -18,6 +18,7 @@ use App\Filament\Resources\HelplineResource\Widgets\MonitoringStats;
 use App\Models\SMSNotification;
 use App\Services\SmsService;
 use PhpParser\Node\Stmt\TryCatch;
+use Livewire\Component;
 
 class MapMonetoring extends Page
 {
@@ -39,12 +40,19 @@ class MapMonetoring extends Page
         return ['open-disease-modal' => 'handleOpenDiseaseModal'];
     }
 
+    public function loadDiseaseData($year_from, $year_to)
+    {
+        $data = $this->getDiseaseMonitoredData($year_from, $year_to);
+
+        // You can store it in a Livewire public property if needed
+        $this->monitoredDiseases = $data;
+    }
     public function handleOpenDiseaseModal($details)
     {
         $this->selectedDisease = $details;
 
-        $brangayid = $this->selectedDisease["query_barangay"];
-        $help_id =  $this->selectedDisease["id"];
+        $brangayid  =  $this->selectedDisease["query_barangay"];
+        $help_id    =  $this->selectedDisease["id"];
         $this->registeredFarms = RegisteredFarm::with(['animal', 'smsNotifications' => function ($query) use ($help_id) {
             $query->where('helpline_id', $help_id);
         }])
@@ -198,14 +206,16 @@ class MapMonetoring extends Page
     {
 
         $data = RegisteredFarm::with('animal')->get()->each(function ($item) {
-            $item->animal_name = $item->animal->animal_name;
+        $item->animal_name = $item->animal->animal_name;
         });
         return $data;
     }
 
-    public function getDiseaseMonitored()
+    public function getDiseaseMonitored($year_from, $year_to)
     {
-        $data = Helpline::with(["disease", "animal", "municipal", "barangay"])->where("status", "Monitored")->get();
+        $data = Helpline::with(["disease", "animal", "municipal", "barangay"])->where("status", "Monitored")
+        ->whereYear('date_reported', '>=', $year_from)
+        ->whereYear('date_reported', '<=', $year_to)->get();
 
         return $data;
     }
