@@ -32,6 +32,7 @@ class MapMonetoring extends Page
 
     public $selectedDisease = [];
     public $registeredFarms = [];
+    public $municipalities  = [];
     protected function getListeners(): array
     {
 
@@ -155,6 +156,7 @@ class MapMonetoring extends Page
 
     public function mount()
     {
+        $this->municipalities = Municipality::all()->sortBy('municipality_name');
         $this->farm_types = Animal::all()->sortBy('animal_name')->pluck('animal_name');
         $this->updateallSMS();
     }
@@ -218,8 +220,8 @@ class MapMonetoring extends Page
     public function getMunicipalities()
     {
 
-        $data = Municipality::all();
-        return $data;
+        $this->municipalities = Municipality::all();
+        return $this->municipalities;
     }
 
     // public static function getWidgets(): array

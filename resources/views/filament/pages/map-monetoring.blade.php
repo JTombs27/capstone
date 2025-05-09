@@ -1,18 +1,31 @@
 
+@php
+    $currentYear = date('Y');
+    $years = range($currentYear, 1900);
+@endphp
+
 <div class="grid grid-cols-12 relative overflow-hidden">
      <style>
         .fi-main { padding: 0 !important;}
     </style>
      <div class="md:col-span-12 lg:col-span-12 col-span-12" wire:ignore>
-        {{-- <div class="shadow p-4 bg-slate-900" style="border-radius: 10px 10px 0px 0px;">
+        {{-- <div class="shadow p-x-4 p-y-2 bg-slate-900" style="border-radius: 10px 10px 0px 0px;">
             <h5 class="font-bold text-gray-700 text-white">
                     Geographic Information System
             </h5>
         </div> --}}
         <div class="shadow bg-slate-900 z-10 col-span-12 grid grid-cols-12 h-svh w-full"  id="map" ></div>
 
-        <div class="absolute bottom-20 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[600px]" style="font-size: 12px;">
+        {{-- <div class="absolute bottom-20 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[600px]" style="font-size: 12px;">
             <h4 class="font-bold mb-[2px]">Filters</h4>
+            <div>
+                <label class="inline mb-1">Year :</label>
+                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div>
                 <label class="inline mb-1">Select Category:</label>
                 <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
@@ -21,19 +34,33 @@
                     <option value="2">Category 2</option>
                 </select>
             </div>
-        </div>
-        <div class="absolute top-4 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
-            <h4 class="font-bold mb-[2px]">Filters</h4>
-            <div>
-                <label class="inline mb-1">Select Category:</label>
+        </div> --}}
+        <div class="absolute top-4 left-4 z-20 bg-white p-4 rounded-lg shadow-lg grid grid-cols-12 w-[500px] gap-x-2" style="font-size: 12px;">
+            <h4 class="font-bold mb-[2px] col-span-2  pt-2">Filters</h4>
+            <div class="col-span-4 grid grid-cols-12 gap-x-2">
+                <label class="col-span-3 inline mb-1 pt-2">Year: </label>
+                <div class="col-span-9">
                 <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
                     <option value="">All</option>
-                    <option value="1">Category 1</option>
-                    <option value="2">Category 2</option>
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
                 </select>
+                </div>
+            </div>
+           <div class="col-span-6 grid grid-cols-12 gap-x-2">
+                <label class="col-span-5 inline mb-1 pt-2">Municipality: </label>
+                <div class="col-span-7">
+                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+                    <option value="">All</option>
+                     @foreach ($this->municipalities as $municipalities)
+                        <option value="{{ $municipalities->municipality_name }}">{{ $municipalities->municipality_name }}</option>
+                    @endforeach
+                </select>
+                </div>
             </div>
         </div>
-        <div class="absolute top-[130px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
+        <div class="absolute top-[90px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             {{-- <h4 class="font-bold mb-[2px]">Testing</h4> --}}
             <div class="col-span-12 gap-y-4">
                  <div class="grid grid-cols-12 mb-[10px]">
@@ -43,10 +70,25 @@
                 </div>
                 <div class="grid grid-cols-12 mb-[10px]">
                     <label class="col-span-12 grid grid-cols-12">
-                        <div class="col-span-11">
-                        View Heatmap
+                        <div class="col-span-11 flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />
+                            </svg>
+
+                            <span style="padding-top:1px;">&nbsp;View Heatmap</span>
                         </div>
-                        <div class="col-span-1"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                        <div class="col-span-1" style="padding-top:1px;"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                    </label>
+                </div>
+                <div class="grid grid-cols-12 mb-[10px]">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-11 flex"> 
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                        </svg>
+                        <span style="padding-top:1px;">&nbsp;View Barangays</span>
+                        </div>
+                        <div class="col-span-1"  style="padding-top:1px;"><input type="checkbox" id="showBarangays"  name="accept_terms" class="form-checkbox text-primary-600"></div>
                     </label>
                 </div>
                 <hr />
@@ -90,7 +132,7 @@
                 
                 var map = L.map('map', {
                             center: [7.5547,126.1404],
-                            zoom: 9,
+                            zoom: 10,
                             layers: [googleStreets],
                             zoomControl: false 
                         });   
@@ -111,7 +153,7 @@
                 var heatLayer = L.heatLayer(heatData, {
                         radius: 25,
                         blur: 15,
-                        maxZoom: 15
+                        maxZoom: 14
                 });
 
                 
@@ -246,8 +288,92 @@
                         .catch(error => {
                             console.error("Error loading GeoJSON:", error);
                         });
-               
-      
+                    
+                var geoJsonLayerB;
+                fetch('/geoJson/BarangayBoundary.json')
+                        .then(response => response.json())
+                        .then(geojsonData => 
+                        {
+                           
+                            let currentIndex = 0;
+                            const Municipalcolors = ["red","transparent"];
+                            geoJsonLayerB = L.geoJSON(geojsonData, {
+                                style: function (feature) 
+                                {
+                                    var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
+                                    var color = municipality ? municipality.color : 'orange';
+                                     
+                                    return { 
+                                        color: 'gray',
+                                        stroke:true, 
+                                        weight: 1, 
+                                        fillColor:"gray",
+                                        fillOpacity:0.3};
+                                },
+                                onEachFeature: function (feature, layer) {
+                                    if (feature.properties && feature.properties.MUN) 
+                                    {
+                                       
+                                        if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
+                                        {
+                                            layer.blink = true;
+                                            
+                                        }
+
+                                        layer.bindPopup("Name: " + feature.properties.MUN,{
+                                                    permanent: false,
+                                                    direction: 'top',
+                                                });
+                                        // Handle click on the polygon
+                                            layer.on('dblclick', function (e) {
+                                                // Get the clicked coordinates
+                                                const clickedCoordinates = e.latlng;
+
+                                                // Trigger the map's click handler manually
+                                                map.fire('dblclick', {
+                                                    latlng: clickedCoordinates,
+                                                    layerPoint: e.layerPoint,
+                                                    containerPoint: e.containerPoint,
+                                                    originalEvent: e.originalEvent
+                                                });
+
+                                                // Optional: Prevent propagation to other events
+                                                L.DomEvent.stopPropagation(e);
+                                            });
+
+                                           // Mouseover event: Highlight the polygon and show details
+                                            layer.on('mouseover', function (e) {
+                                                // Highlight the polygon
+                                                e.target.setStyle({
+                                                    color: 'blue',
+                                                    weight: 1,
+                                                    fillOpacity: 0.2,
+                                                });
+
+                                                // Show details in a tooltip
+                                                layer.bindTooltip("Barangay: " + feature.properties.Brgy.toLowerCase(), {
+                                                    permanent: false,
+                                                    direction: 'top',
+                                                }).openTooltip(e.latlng);
+
+                                            });
+
+                                            // Mouseout event: Reset the style and remove details
+                                            layer.on('mouseout', function (e) {
+                                                // Reset the style to default
+                                                geoJsonLayerB.resetStyle(e.target);
+
+                                                // Remove the tooltip
+                                                e.target.closeTooltip();
+                                            });
+                                    }
+                                }
+                            })
+                        })
+                        .catch(error => {
+                            console.error("Error loading GeoJSON:", error);
+                        });
+
                 function showFarms(farm_type,checkD) 
                 {
                     if(!checkD)
@@ -305,7 +431,22 @@
                   
                 }
 
+                function showBarangays()
+                {
+                    if (map.hasLayer(geoJsonLayerB)) 
+                    {
+                        geoJsonLayerB.removeFrom(map);
+                        geoJsonLayerMunicipality.addTo(map);
+                    }
+                    else
+                    {
+                        geoJsonLayerB.addTo(map);
+                        geoJsonLayerMunicipality.removeFrom(map);
+                    }
+                }
+
                 document.getElementById('showHeatMapButton').addEventListener('click', showDiseaseCaseHeatMap);
+                document.getElementById('showBarangays').addEventListener('click', showBarangays);
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 
                     {
