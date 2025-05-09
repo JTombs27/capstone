@@ -10,6 +10,18 @@
             </h5>
         </div> --}}
         <div class="shadow bg-slate-900 z-10 col-span-12 grid grid-cols-12 h-svh w-full"  id="map" ></div>
+
+        <div class="absolute bottom-20 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[600px]" style="font-size: 12px;">
+            <h4 class="font-bold mb-[2px]">Filters</h4>
+            <div>
+                <label class="inline mb-1">Select Category:</label>
+                <select class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+                    <option value="">All</option>
+                    <option value="1">Category 1</option>
+                    <option value="2">Category 2</option>
+                </select>
+            </div>
+        </div>
         <div class="absolute top-4 left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             <h4 class="font-bold mb-[2px]">Filters</h4>
             <div>
