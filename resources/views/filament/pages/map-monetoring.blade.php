@@ -137,6 +137,7 @@
 
                 var monitoredDiseases   = @json($this->getDiseaseMonitored(2000,2025));    
                 const heatPoints = monitoredDiseases.map(item => [item.latitude, item.longitude, item.affected_count]);
+
                 var heatLayer = L.heatLayer(heatPoints, {
                         radius: 25,
                         blur: 15,
@@ -180,7 +181,6 @@
                     {
                         manokan.addLayer(marker);
                     }
-
                     allFarmType.addLayer(marker);
                 });
                 var year_from           = document.getElementById('filter_year_from').value;
@@ -435,8 +435,70 @@
                     showDiseaseCaseHeatMap();
                 }
 
+                function filterByDiseaseType() 
+                {
+                     var fromYear  = document.getElementById('filter_year_from').value;
+                     var toYear    = document.getElementById('filter_year_to').value;
+                     var filterMun = document.getElementById('filter_municipality').value.toString().trim().toLowerCase();
+                    let filtered = monitoredDiseases.filter(item => 
+                                                        {
+                                                            const reportYear = new Date(item.date_reported).getFullYear();
+                                                            return reportYear >= fromYear && reportYear <= toYear;
+                                                        });
+                     if(filterMun != "")
+                     {
+                        filtered = filtered.filter(item => 
+                                            {
+                                                return item.municipal.municipality_name.toLowerCase() == filterMun;
+                                            });
+                     }
+                    //console.log(filtered);
+
+                    renderHeatmap(filtered);
+                }
+
+
+                function renderHeatmap(filteredData) 
+                {
+                    const heatPoints = filteredData.map(item => [
+                        item.latitude,
+                        item.longitude,
+                        item["affected_count"]
+                    ]);
+                
+                    // Remove old heat layer if it exists
+                    if (heatLayer) {
+                        map.removeLayer(heatLayer);
+                    }
+                
+                    // Create new heat layer
+                    heatLayer = L.heatLayer(heatPoints, {
+                        radius: 25,
+                        blur: 10,
+                        maxZoom: 17,
+                        pane: 'heatPane'
+                    }).addTo(map);
+
+                    filteredData.forEach(point => 
+                    {
+                        L.circleMarker([point.latitude, point.longitude], {
+                            radius: 10,
+                            color: 'transparent',
+                            fillOpacity: 0,
+                            pane:"markerPane"
+                        })
+                        .on('click', () => {
+                            window.dispatchEvent(new CustomEvent('open-disease-modal', { detail: {details : point} }));
+                        })
+                        .addTo(map);
+                    });
+                }
+
                 document.getElementById('showHeatMapButton').addEventListener('click', showDiseaseCaseHeatMap);
                 document.getElementById('showBarangays').addEventListener('click', showBarangays);
+                document.getElementById('filter_year_from').addEventListener('change', filterByDiseaseType);
+                document.getElementById('filter_year_to').addEventListener('change', filterByDiseaseType);
+                document.getElementById('filter_municipality').addEventListener('change', filterByDiseaseType);
 
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 
