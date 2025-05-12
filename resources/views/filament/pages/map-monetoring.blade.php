@@ -3,13 +3,22 @@
     $currentYear = date('Y');
     $years = range($currentYear, 1900);
 @endphp
-
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+@endpush
 <div class="grid grid-cols-12 relative overflow-hidden">
      <style>
         .fi-main { padding: 0 !important;}
+        .leaflet-overlay-pane {
+            z-index: 700 !important;
+        }
+
+        .leaflet-heatmap-layer {
+            pointer-events: none !important;
+        }
     </style>
-     <div class="md:col-span-12 lg:col-span-12 col-span-12" wire:ignore>
-        <div class="absolute left-4 z-20 bg-white p-4 rounded-lg shadow-lg grid grid-cols-12 w-[700px] gap-x-2" style="font-size: 12px; top:5px !important;">
+    <div class="md:col-span-12 lg:col-span-12 col-span-12 grid grid-cols-12" wire:ignore>
+        <div class="absolute left-4 z-20 bg-white top-[12px] p-4 rounded-lg shadow-lg grid grid-cols-12 w-[700px] gap-x-2" style="font-size: 12px;">
             <h4 class="font-bold mb-[2px] col-span-1  pt-2">Filters</h4>
             <div class="col-span-3 grid grid-cols-12 gap-x-2">
                 <label class="col-span-4 inline mb-1 pt-2 text-right">From: </label>
@@ -34,7 +43,7 @@
            <div class="col-span-5 grid grid-cols-12 gap-x-2">
                 <label class="col-span-4 inline mb-1 pt-2">Municipality: </label>
                 <div class="col-span-8">
-                <select id="filter_municipality" class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
+                <select id="filter_municipality"  class="border-gray-300 rounded px-2 py-1 w-full" style="font-size: 12px;">
                     <option value="">All</option>
                      @foreach ($this->municipalities as $municipalities)
                         <option value="{{ $municipalities->municipality_name }}">{{ $municipalities->municipality_name }}</option>
@@ -43,7 +52,7 @@
                 </div>
             </div>
         </div>
-        <div class="absolute top-[78px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
+        <div class="absolute top-[85px] left-4 z-20 bg-white p-4 rounded-lg shadow-lg w-[200px]" style="font-size: 12px;">
             {{-- <h4 class="font-bold mb-[2px]">Testing</h4> --}}
             <div class="col-span-12 gap-y-4">
                  <div class="grid grid-cols-12 mb-[10px]">
@@ -61,6 +70,17 @@
                             <span style="padding-top:1px;">&nbsp;View Heatmap</span>
                         </div>
                         <div class="col-span-1" style="padding-top:1px;"><input type="checkbox" id="showHeatMapButton"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                    </label>
+                </div>
+                <div class="grid grid-cols-12 mb-[10px]">
+                    <label class="col-span-12 grid grid-cols-12">
+                        <div class="col-span-11 flex"> 
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
+                        </svg>
+                        <span style="padding-top:1px;">&nbsp;View Municipalities</span>
+                        </div>
+                        <div class="col-span-1"  style="padding-top:1px;"><input type="checkbox" id="showMunicipality"  name="accept_terms" class="form-checkbox text-primary-600"></div>
                     </label>
                 </div>
                 <div class="grid grid-cols-12 mb-[10px]">
@@ -101,21 +121,29 @@
                 </div>
             </div>
         </div>
+       
         <div class="shadow bg-slate-900 z-10 col-span-12 grid grid-cols-12 w-full" style="height: calc(100vh - 64px);"  id="map" ></div>
-        
+        <div class="absolute top-[85px] right-0 z-20 rounded-lg shadow-lg w-[250px]" style="font-size: 12px;">
+            <div class="grid grid-cols-12">
+                <div class="col-span-12" id="charts"></div>
+            </div>
+        </div>
     @push('scripts')
-    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+        <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
         let geoJsonLayerMunicipality;
+       
         document.addEventListener('DOMContentLoaded', function () 
             {
+                var filteredDataMain;
                 const currentYear = new Date().getFullYear();
                 document.getElementById('filter_year_from').addEventListener('change', showDiseaseCaseHeatMap);
                 document.getElementById('filter_year_from').value   = 2000;
                 document.getElementById('filter_year_to').value     = currentYear;
                 
                  var googleStreets = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
-                    maxZoom: 15,
+                    maxZoom: 17,
                     minZoom: 7,  
                     subdomains:['mt0','mt1','mt2','mt3']
                 });
@@ -126,18 +154,19 @@
                             layers: [googleStreets],
                             zoomControl: false 
                         }); 
+                L.control.zoom({
+                    position: 'topright' // Default is 'topleft'
+                }).addTo(map);
                 map.createPane('polygonsPane');
                 map.getPane('polygonsPane').style.zIndex = 600;
-
                 map.createPane('heatPane');
                 map.getPane('heatPane').style.zIndex = 700;
-
                 map.createPane('markerPane'); // optional; markers use default pane
                 map.getPane('markerPane').style.zIndex = 750;
 
                 var monitoredDiseases   = @json($this->getDiseaseMonitored(2000,2025));    
-                const heatPoints = monitoredDiseases.map(item => [item.latitude, item.longitude, item.affected_count]);
-
+                const heatPoints        = monitoredDiseases.map(item => [item.latitude, item.longitude, item.affected_count]);
+                filteredDataMain        = monitoredDiseases;
                 var heatLayer = L.heatLayer(heatPoints, {
                         radius: 25,
                         blur: 15,
@@ -155,6 +184,7 @@
                 data.forEach(function (farm) 
                 {
                     var iconUrl = '/images/farmMarker.png'
+                    console.log(farm);
                     if(farm.animal_name != "All")
                     {
                         iconUrl = '/images/'+farm.animal_name+'.png';
@@ -169,7 +199,15 @@
                         })
                     })
                     .bindPopup(`
-                    <table> <tr> <td style="width:40%">  <img class="mx-auto my-auto h-100 block rounded-full"  src="/images/five-farm-biosecurity-practices.jpg" alt="product image" /></tr> </table>
+                    <div style="z-index:800 !important;">
+                         <center>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-10">
+                                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                            </svg>
+                       
+                             <b>`+farm.owner_firstname+' '+farm.owner_lastname+`</b>
+                        </center>
+                    </div>
                   `);
                     
                     if(farm.animal_name == "Baboy")
@@ -202,14 +240,14 @@
                                 style: function (feature) 
                                 {
                                     var municipality = municipalities.find(m =>  m.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
-                                    var color = "ac6516"//municipality ? municipality.color : 'orange';
+                                    var color = "white"//"#f9a547"//municipality ? municipality.color : 'orange';
                                      
                                     return { 
                                         color: '#ac6516',
                                         stroke:true, 
                                         weight: 2, 
                                         fillColor:color,
-                                        fillOpacity:0};
+                                        fillOpacity:0.5};
                                 },
                                 onEachFeature: function (feature, layer) {
                                     if (feature.properties && feature.properties.MUN) 
@@ -248,9 +286,15 @@
                                                     color: '#f9a547',
                                                     weight: 3,
                                                     fillOpacity: 0.3,
-                                                    fillColor:"#f9a547"
+                                                    fillColor:"white"
                                                 });
-                                            });
+
+                                                layer.bindTooltip("🏛️: " + feature.properties.MUN, {
+                                                    permanent: false,
+                                                    direction: 'top',
+                                                }).openTooltip(e.latlng);
+                                            })
+                                            ;
 
                                             // Mouseout event: Reset the style and remove details
                                             layer.on('mouseout', function (e) 
@@ -261,11 +305,7 @@
                                             });
                                     }
                                 }
-
-                                
                             })
-
-                            showDiseaseCaseHeatMap();
                         })
                         .catch(error => {
                             console.error("Error loading GeoJSON:", error);
@@ -292,7 +332,7 @@
                                         stroke:true, 
                                         weight: 1, 
                                         fillColor:"gray",
-                                        fillOpacity:0.3};
+                                        fillOpacity:0};
                                 },
                                 onEachFeature: function (feature, layer) 
                                 {
@@ -336,7 +376,7 @@
                                                 });
 
                                                 // Show details in a tooltip
-                                                layer.bindTooltip("Barangay: " + feature.properties.Brgy.toLowerCase(), {
+                                                layer.bindTooltip("🏘️: " + feature.properties.Brgy.toLowerCase(), {
                                                     permanent: false,
                                                     direction: 'top',
                                                 }).openTooltip(e.latlng);
@@ -354,6 +394,8 @@
                                     }
                                 }
                             });
+                            showDiseaseCaseHeatMap();
+                            showMunicipality();
                         })
                         .catch(error => {
                             console.error("Error loading GeoJSON:", error);
@@ -392,16 +434,11 @@
                 {
                      if (!document.getElementById('showHeatMapButton').checked) 
                         {
-                            geoJsonLayerMunicipality.removeFrom(map);
                             heatLayer.removeFrom(map);
                         }
                     else{
-                        if(!document.getElementById('showBarangays').checked)
-                        {
-                            geoJsonLayerMunicipality.addTo(map);
-                        }
-                           map.removeLayer(heatLayer);
-                           map.addLayer(heatLayer);
+
+                        bringHeatToFront();
                             monitoredDiseases.forEach(point => 
                             {
                                 L.circleMarker([point.latitude, point.longitude], {
@@ -424,15 +461,25 @@
                     if (map.hasLayer(geoJsonLayerB)) 
                     {
                         geoJsonLayerB.removeFrom(map);
-                        geoJsonLayerMunicipality.addTo(map);
                     }
                     else
                     {
                         geoJsonLayerB.addTo(map);
+                    }
+                    bringHeatToFront()
+                }
+
+                function showMunicipality()
+                {
+                    if (map.hasLayer(geoJsonLayerMunicipality)) 
+                    {
                         geoJsonLayerMunicipality.removeFrom(map);
                     }
-
-                    showDiseaseCaseHeatMap();
+                    else
+                    {
+                        geoJsonLayerMunicipality.addTo(map);
+                    }
+                    bringHeatToFront()
                 }
 
                 function filterByDiseaseType() 
@@ -452,9 +499,8 @@
                                                 return item.municipal.municipality_name.toLowerCase() == filterMun;
                                             });
                      }
-                    //console.log(filtered);
-
                     renderHeatmap(filtered);
+                    reFreshChart();
                 }
 
 
@@ -465,20 +511,9 @@
                         item.longitude,
                         item["affected_count"]
                     ]);
-                
-                    // Remove old heat layer if it exists
-                    if (heatLayer) {
-                        map.removeLayer(heatLayer);
-                    }
-                
-                    // Create new heat layer
-                    heatLayer = L.heatLayer(heatPoints, {
-                        radius: 25,
-                        blur: 10,
-                        maxZoom: 17,
-                        pane: 'heatPane'
-                    }).addTo(map);
-
+                    heatLayer.setLatLngs(heatPoints);
+                    filteredDataMain = filteredData;
+                    bringHeatToFront();
                     filteredData.forEach(point => 
                     {
                         L.circleMarker([point.latitude, point.longitude], {
@@ -499,7 +534,8 @@
                 document.getElementById('filter_year_from').addEventListener('change', filterByDiseaseType);
                 document.getElementById('filter_year_to').addEventListener('change', filterByDiseaseType);
                 document.getElementById('filter_municipality').addEventListener('change', filterByDiseaseType);
-
+                document.getElementById('showMunicipality').addEventListener('change', showMunicipality);
+                
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 
                     {
@@ -516,12 +552,217 @@
                     });
                     });
                 document.getElementById('showHeatMapButton').checked = true;
+                document.getElementById('showMunicipality').checked = true;
 
-        });
+              
+                function bringHeatToFront() 
+                {
+                    map.removeLayer(heatLayer);
+                    heatLayer.addTo(map); // adds it back on top
+                }
+
+                var grouped = {};
+                filteredDataMain.forEach(item => {
+                    const name = item.municipal?.municipality_name || 'Unknown';
+                    grouped[name] = (grouped[name] || 0) + 1;
+                });
+
+                var sorted = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+
+                var labels = sorted.map(([name]) => name);
+                var series = sorted.map(([, count]) => count);
+                function getMedian(arr) 
+                    {
+                        if (!arr.length) return null;
+
+                        const sorted = [...arr].sort((a, b) => a - b);
+                        const mid = Math.floor(sorted.length / 2);
+
+                        if (sorted.length % 2 === 0) {
+                            // Even: average of two middle values
+                            return (sorted[mid - 1] + sorted[mid]) / 2;
+                        } else {
+                            // Odd: return middle value
+                            return sorted[mid];
+                        }
+                    }
+
+                var options = 
+                {
+                    series: 
+                        [
+                            {name: 'Report Cases',data: series}
+                        ],
+                        chart: {
+                        type: 'bar',
+                        height: 300
+                        },
+                        annotations: 
+                        {
+                            xaxis: [{
+                                x: getMedian(series),
+                                borderColor: '#00E396',
+                                label: {
+                                    borderColor: '#00E396',
+                                        style: {
+                                            color: '#fff',
+                                            background: '#00E396',
+                                        },
+                                text: 'Median data',
+                                }
+                            }],
+                            // yaxis: [{
+                            //     y: 'Maco',
+                            //     y2: 'New Bataan',
+                            //     label: {
+                            //     text: 'Y annotation'
+                            //     }
+                            // }]
+                        },
+                        plotOptions: 
+                        {
+                            bar: {
+                                horizontal: true,
+                            }
+                        },
+                        dataLabels: 
+                        {
+                            enabled: true,
+                        },
+                        xaxis: 
+                        {
+                            categories: labels,
+                        },
+                        title: 
+                        {
+                            text: 'Reported Cases by Municipality',
+                            align: 'left',  // 'left', 'center', or 'right'
+                            margin: 2,
+                            offsetY: 2,
+                            style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            color: '#263238'
+                            }
+                        },
+                        grid: 
+                        {
+                            xaxis: {
+                                lines: {
+                                show: false
+                                }
+                            },
+                            yaxis: {
+                                lines: {
+                                show: false
+                                }
+                            }
+
+                        },
+                        yaxis: 
+                        {
+                            reversed: true,
+                            axisTicks: 
+                            {
+                                show: true
+                            }
+                        },
+                        // tooltip: {
+                        //         y: {
+                        //             formatter: function (val, opts) {
+                        //                 const index = opts.dataPointIndex;
+                        //                 const name = labels[index];
+                        //                 return `${name}: ${val}`;
+                        //             }
+                        //         }
+                        //     }
+
+                    };
+
+                var chart = new ApexCharts(document.querySelector("#charts"), options);
+                chart.render();
+
+                function reFreshChart()
+                {
+                    if(filteredDataMain.length > 0)
+                    {
+                        grouped = {};
+                        var filterMun = document.getElementById('filter_municipality').value.toString().trim().toLowerCase();
+                        console.log(filterMun);
+                        if(filterMun != "")
+                        {
+                            filteredDataMain.forEach(item => {
+                                grouped["Apiktado"] = (grouped["Apiktado"] || 0) + item.affected_count;
+                                grouped["Sample"] = (grouped["Sample"] || 0) + item.sample_count;
+                                grouped["Positive"] = (grouped["Positive"] || 0) + item.positive_count;
+                            });
+
+                            console.log(grouped);
+                            sorted = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+                            console.log(sorted);
+                            labels = sorted.map(([name]) => name);
+                            series = sorted.map(([, count]) => count);
+                            sorted = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+
+                            labels = sorted.map(([name]) => name);
+                            series = sorted.map(([, count]) => count);
+                            mySeries = [];
+                            sorted.forEach(item => {
+                                mySeries.push({name:item[0],data:[item[1]]})
+                            });
+                            chart.updateOptions({
+                                xaxis: {
+                                    categories: [filteredDataMain[0].municipal.municipality_name]
+                                }
+                                });
+                            chart.updateSeries(mySeries);
+                        }
+                        else
+                        {
+                            filteredDataMain.forEach(item => {
+                                const name = item.municipal?.municipality_name || 'Unknown';
+                                grouped[name] = (grouped[name] || 0) + 1;
+                            });
+
+                            sorted = Object.entries(grouped).sort((a, b) => b[1] - a[1]);
+
+                            labels = sorted.map(([name]) => name);
+                            series = sorted.map(([, count]) => count);
+
+                            chart.updateOptions({
+                                xaxis: {
+                                    categories: labels 
+                                }
+                                });
+                                chart.updateSeries([
+                                {
+                                    name: 'Report Cases',
+                                    data: series
+                                }
+                                ]);
+                        }
+                    }
+                    else{
+                        chart.updateOptions({
+                                xaxis: {
+                                    categories: ["No Data"]
+                                }
+                                });
+                        chart.updateSeries([
+                            {
+                                name: 'Report Cases',
+                                data: [0]
+                            }
+                            ]);
+                    }
+                   
+                }
+
+    });
         
       
-    </script>
-    @endpush
+</script>
+@endpush
 </div>
 <x-filament::modal id="diseaseInfo" slide-over  class="z-[999]" alignment="center" width="md">
     <x-slot name="heading">
@@ -531,6 +772,8 @@
         Under Barangay of: {{ $selectedDisease["barangay"]['barangay_name'] ?? '' }}<br/>
         <p><b>Disease :</b>{{ $selectedDisease["disease"]['disease_description'] ?? '' }} 
         <i class="text-gray-500" style="font-size: 12px !important;">Sakit sa {{ $selectedDisease["animal"]['animal_name'] ?? ''}}</i>
+        </p>
+        <p><b>Apiktado :</b>{{ $selectedDisease["affected_count"] ?? '' }} 
         </p>
         <p><b>Preventions:</b><br>{{ $selectedDisease["disease"]['preventions'] ?? '' }}</p>
         <p><b>Treatments:</b><br>{{ $selectedDisease["disease"]['treatment'] ?? '' }}</p>

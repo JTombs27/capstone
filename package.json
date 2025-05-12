@@ -16,6 +16,7 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
+        "apexcharts": "^4.7.0",
         "heatmap.js": "^2.0.5",
         "leaflet": "^1.9.4",
         "leaflet-heatmap": "^1.0.0",
