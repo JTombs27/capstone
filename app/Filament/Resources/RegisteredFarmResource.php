@@ -28,7 +28,9 @@ class RegisteredFarmResource extends Resource
 {
     protected static ?string $model = RegisteredFarm::class;
 
-    protected static ?string $navigationIcon = 'icon-animals';
+    protected static ?string $navigationIcon    = 'icon-animals';
+    protected static ?string $navigationLabel   = "Farm Registration";
+    protected static ?int $navigationSort       = 4;
 
     protected int $zoom = 15;
 

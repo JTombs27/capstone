@@ -49,7 +49,7 @@ class HelplineResource extends Resource
 
     protected static ?string $model = Helpline::class;
 
-    protected static ?string $navigationGroup   = "SERVICES";
+    // protected static ?string $navigationGroup   = "SERVICES";
     protected static ?string $navigationIcon    = 'heroicon-o-lifebuoy';
     protected static ?string $navigationLabel   = "Animal Disease Cases";
     protected static ?string $label             = "Animal Disease Cases";

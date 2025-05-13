@@ -36,6 +36,11 @@ class UserResource extends Resource
                     ->password()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\CheckboxList::make('roles')
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->gridDirection('row')
+                    ->columns(4),
             ]);
     }
 
