@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DiseaseResource\Pages;
 
 use Filament\Actions;
 use Illuminate\Support\Arr;
+use Filament\Actions\Action;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
@@ -17,6 +18,33 @@ class CreateDisease extends CreateRecord
 
 
     protected static ?string $breadcrumb = "Add New Disease";
+    protected function getCreateFormAction(): Action
+    {
+        return
+            Action::make('create')
+            ->label('💾 Save') // Label for the default create
+            ->submit('create');
+    }
+    protected function getCreatedNotificationMessage(): ?string
+    {
+        return "New disease Successfully Added!";
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return   Action::make('createAnother')
+            ->label('📝 Save & Add New') // Custom label here
+            ->action('createAnother')
+            ->extraAttributes([
+                'class' => 'bg-green-600 hover:bg-green-700 text-white', // Customize as needed
+            ]);
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
+
     public function getTitle(): string
     {
         return 'Register New Disease'; // ✅ Custom page title

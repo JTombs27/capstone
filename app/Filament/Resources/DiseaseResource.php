@@ -31,7 +31,8 @@ class DiseaseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-triangle';
     protected static ?string $navigationGroup = "UTILITIES";
-
+    protected static ?string $navigationLabel = "Animal Diseases";
+    protected static ?string $label           = "List Animal Diseases";
     public static function getBreadcrumbs(): array
     {
         return [
@@ -110,10 +111,6 @@ class DiseaseResource extends Resource
     {
         return $table
             ->columns([
-                //
-                // Tables\Columns\TextColumn::make('animal.animal_name')
-                //     ->label("For Animals")
-                //     ->searchable(),
                 Tables\Columns\TextColumn::make('disease_description')
                     ->description(fn($record): string => $record->disease_type)
                     ->label("Disease Description")
@@ -149,26 +146,28 @@ class DiseaseResource extends Resource
                     ->options(Animal::whereNot("animal_name", "All")->pluck('animal_name', 'id'))
             ])
             ->actions([
-                ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Action::make("Print")
-                        ->icon("heroicon-s-printer")
-                        ->color("success")
-                        ->modalWidth("3xl")
-                        ->modalContent(
-                            fn($record) => view(
-                                'livewire.report-viewer',
-                                [
-                                    'report_iframe' => "http://hris.dvodeoro.ph:452/CrystalReportMVC/ViewReport?par_value=$record->id"
-                                ]
+                // ActionGroup::make([])
+                //     ->icon("heroicon-s-cog-6-tooth"),
+                Tables\Actions\EditAction::make()
+                    ->label(""),
+                Action::make("Print")
+                    ->icon("heroicon-s-printer")
+                    ->label('')
+                    ->color("success")
+                    ->modalWidth("3xl")
+                    ->modalContent(
+                        fn($record) => view(
+                            'livewire.report-viewer',
+                            [
+                                'report_iframe' => "http://hris.dvodeoro.ph:452/CrystalReportMVC/ViewReport?par_value=$record->id"
+                            ]
 
-                            )
                         )
-                        ->slideOver()
-                        ->modalAlignment(Alignment::Center),
-                    Tables\Actions\DeleteAction::make(),
-                ])
-                    ->icon("heroicon-s-cog-6-tooth")
+                    )
+                    ->slideOver()
+                    ->modalAlignment(Alignment::Center),
+                Tables\Actions\DeleteAction::make()
+                    ->label(""),
             ])
         ;
         // ->bulkActions([

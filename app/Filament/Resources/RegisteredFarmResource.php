@@ -13,12 +13,14 @@ use App\Models\Municipality;
 use App\Models\RegisteredFarm;
 use Filament\Resources\Resource;
 use Dotswan\MapPicker\Fields\Map;
+use Illuminate\Support\HtmlString;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Fieldset;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\RegisteredFarmResource\Pages;
 use Filament\Infolists\Components\Section as ComponentsSection;
@@ -30,6 +32,7 @@ class RegisteredFarmResource extends Resource
 
     protected static ?string $navigationIcon    = 'icon-animals';
     protected static ?string $navigationLabel   = "Farm Registration";
+    protected static ?string $label             = "List of Registered Farm";
     protected static ?int $navigationSort       = 4;
 
     protected int $zoom = 15;
@@ -212,12 +215,6 @@ class RegisteredFarmResource extends Resource
                 Tables\Columns\TextColumn::make('animal.animal_name')
                     ->label("Farm Type")
                     ->searchable(),
-                Tables\Columns\TextColumn::make('farm_status')
-                    ->searchable(),
-                // Tables\Columns\TextColumn::make('farm_municipality')
-                //     ->searchable(),
-                // Tables\Columns\TextColumn::make('farm_barangay')
-                //     ->searchable(),
                 Tables\Columns\TextColumn::make('farm_address')
                     ->label('Farm Other Info')
                     ->searchable(),
@@ -239,21 +236,43 @@ class RegisteredFarmResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Action::make('status')
-                    ->form([
-                        Select::make('farm_status')
-                            ->options([
-                                'Application' => 'Application',
-                                'For Survey' => 'For Survey',
-                                'Registered' => 'Registered'
-                            ])
-                    ])
+                    ->label(function ($record) {
+                        $returnVal = '<span class="text-gray-600">Unset Status</span>';
+                        if ($record->farm_status == 'For Survey') {
+                            $returnVal = '<span class="text-orange-600 font-semibold">📋 For Survey</span>';
+                        }
+                        if ($record->farm_status ==  'Registered') {
+                            $returnVal = '<span class="text-green-600 font-semibold">✅ Registered</span>';
+                        }
+                        if ($record->farm_status ==  'Inactive') {
+                            $returnVal = '<span class="text-red-600 font-semibold">🔕 Inactive</span>';
+                        }
+                        return new HtmlString($returnVal);
+                    })
+                    ->form(function ($record) {
+                        return [
+                            Select::make('farm_status')
+                                ->options([
+                                    'For Survey' => 'For Survey',
+                                    'Registered' => 'Registered',
+                                    'Inactive' => 'Inactive',
+                                ])
+                                ->default($record->farm_status), // ✅ Set default from record
+                        ];
+                    })
                     ->modalWidth("md")
                     ->action(function (array $data, $record) {
                         $record->farm_status = $data["farm_status"];
                         $record->save();
-                    })
+                    }),
+                Tables\Actions\EditAction::make()
+                    ->label(''),
+                Tables\Actions\DeleteAction::make()
+                    ->label('')
+                    ->successNotificationTitle('Successfully Deleted')
+                    ->successNotificationMessage('The item has been successfully removed.'),
+
             ]);
         // ->bulkActions([
         //     Tables\Actions\BulkActionGroup::make([

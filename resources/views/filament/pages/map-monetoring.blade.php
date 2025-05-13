@@ -3,9 +3,6 @@
     $currentYear = date('Y');
     $years = range($currentYear, 1900);
 @endphp
-@push('styles')
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-@endpush
 <div class="grid grid-cols-12 relative overflow-hidden">
      <style>
         .fi-main { padding: 0 !important;}
@@ -94,6 +91,17 @@
                         <div class="col-span-1"  style="padding-top:1px;"><input type="checkbox" id="showBarangays"  name="accept_terms" class="form-checkbox text-primary-600"></div>
                     </label>
                 </div>
+                <div  class="grid grid-cols-12 mb-[10px]">
+                    <label class="col-span-12 grid grid-cols-12" onclick="document.getElementById('asfLegends').classList.toggle('hidden')">
+                        <div class="col-span-11 flex" onclick="document.getElementById('asfLegends').classList.toggle('hidden')">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                              </svg>
+                            <span style="padding-top:1px;">&nbsp;View ASF Zoning</span>
+                        </div>
+                        <div class="col-span-1" style="padding-top:1px;"><input type="checkbox" id="showASFZoning"  name="accept_terms" class="form-checkbox text-primary-600"></div>
+                    </label>
+                </div>
                 <hr />
                 <div class="grid grid-cols-12 mt-[10px]">
                     <label class="col-span-12 grid grid-cols-12">
@@ -123,9 +131,19 @@
         </div>
        
         <div class="shadow bg-slate-900 z-10 col-span-12 grid grid-cols-12 w-full" style="height: calc(100vh - 64px);"  id="map" ></div>
-        <div class="absolute top-[85px] right-0 z-20 rounded-lg shadow-lg w-[250px]" style="font-size: 12px;">
+        <div class="absolute top-[85px] right-0 z-10 rounded-lg shadow-lg w-[250px]" style="font-size: 12px;">
             <div class="grid grid-cols-12">
                 <div class="col-span-12" id="charts"></div>
+            </div>
+        </div>
+        <div id="asfLegends"  class="hidden absolute bottom-5 left-1/2 -translate-x-1/2 z-10 bg-white rounded-md p-2" style="font-size: 12px;">
+            <div class="col-lg-12">
+                <b>Zoning Legends:</b>
+            </div>
+            <div class="flex item-center gap-2 mt-1">
+                <span class="w-4 h-4 rounded-sm bg-yellow-400 inline-block"></span><span>Surveillance Zone</span>
+                <span class="w-4 h-4 rounded-sm bg-pink-400 inline-block"></span>  <span>Buffer Zone</span>
+                <span class="w-4 h-4 rounded-sm bg-red-500 inline-block"></span>    <span>Infected Zone</span>
             </div>
         </div>
     @push('scripts')
@@ -165,6 +183,8 @@
                 map.getPane('markerPane').style.zIndex = 750;
 
                 var monitoredDiseases   = @json($this->getDiseaseMonitored(2000,2025));    
+                var ASFZoningData       = @json($this->getASFZoning());
+
                 const heatPoints        = monitoredDiseases.map(item => [item.latitude, item.longitude, item.affected_count]);
                 filteredDataMain        = monitoredDiseases;
                 var heatLayer = L.heatLayer(heatPoints, {
@@ -222,7 +242,119 @@
                     allFarmType.addLayer(marker);
                 });
                 var year_from           = document.getElementById('filter_year_from').value;
-                var year_to             = document.getElementById('filter_year_to').value;   
+                var year_to             = document.getElementById('filter_year_to').value; 
+                var ASFGeoJson;
+
+                fetch('/geoJson/MunicipalBoundary.json')
+                                .then(response => response.json())
+                                .then(geojsonData => {
+                                    const blinkingBarangay = "Casoon"; 
+                                    let currentIndex = 0;
+                                    const Municipalcolors = ["red","transparent"];
+                                    ASFGeoJson = L.geoJSON(geojsonData, {
+                                        pane: 'polygonsPane',
+                                        style: function (feature) 
+                                        {
+                                            var municipality = ASFZoningData.find(m =>  m.municipality.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
+                                            var color = municipality ? municipality.color_code : 'orange';
+                                            
+                                            return { color: 'white',
+                                                stroke:true, 
+                                                weight: 2, 
+                                                fillOpacity:currentOpacity,
+                                                fillColor:color,
+                                                fillOpacity:1};
+                                        },
+                                        onEachFeature: function (feature, layer) {
+                                            if (feature.properties && feature.properties.MUN) 
+                                            {
+                                            
+                                                 let municipality = ASFZoningData.find(m => 
+                                                    m.municipality.municipality_name.toLowerCase() === feature.properties.MUN.toLowerCase()
+                                                );
+
+                                                let color = municipality ? municipality.color_code : 'orange';
+
+                                                // If the municipality's fillColor is red, add it to blinkingLayers
+                                                if (color === "red") {
+                                                    layer.blink = true;
+                                                }
+                                                // if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
+                                                // {
+                                                //     layer.blink = true;
+                                                // }
+
+                                                layer.bindPopup("Name: " + feature.properties.MUN,{
+                                                            permanent: false,
+                                                            direction: 'top',
+                                                        });
+                                                // Handle click on the polygon
+                                                    layer.on('dblclick', function (e) {
+                                                        // Get the clicked coordinates
+                                                        const clickedCoordinates = e.latlng;
+
+                                                        // Trigger the map's click handler manually
+                                                        map.fire('dblclick', {
+                                                            latlng: clickedCoordinates,
+                                                            layerPoint: e.layerPoint,
+                                                            containerPoint: e.containerPoint,
+                                                            originalEvent: e.originalEvent
+                                                        });
+
+                                                        // Optional: Prevent propagation to other events
+                                                        L.DomEvent.stopPropagation(e);
+                                                    });
+
+                                                // Mouseover event: Highlight the polygon and show details
+                                                    layer.on('mouseover', function (e) {
+                                                        // Highlight the polygon
+                                                        e.target.setStyle({
+                                                            color: 'blue',
+                                                            weight: 1,
+                                                            fillOpacity: 0.5,
+                                                        });
+
+                                                        // Show details in a tooltip
+                                                        layer.bindTooltip("🏛️: " + feature.properties.MUN, {
+                                                                permanent: false,
+                                                                direction: 'top',
+                                                            }).openTooltip(e.latlng);
+
+                                                    });
+
+                                                    // Mouseout event: Reset the style and remove details
+                                                    layer.on('mouseout', function (e) {
+                                                        // Reset the style to default
+                                                        ASFGeoJson.resetStyle(e.target);
+
+                                                        // Remove the tooltip
+                                                        e.target.closeTooltip();
+                                                    });
+                                            }
+                                        }
+                                    });
+
+                                    // Set up the blinking effect
+                                    setInterval(() => {
+                                        currentIndex = (currentIndex + 1) % Municipalcolors.length;
+
+                                        ASFGeoJson.eachLayer(layer => {
+                                            // Check if this layer should blink
+                                            if (layer.blink) {
+                                                layer.setStyle({
+                                                    fillColor: Municipalcolors[currentIndex],
+                                                    fillOpacity:1,
+                                                    stroke:true,
+                                                    opacity:1,
+                                                    color:"red"
+                                                });
+                                            }
+                                        });
+                                    }, 500); // Blink every 1 second
+                                })
+                                .catch(error => {
+                                    console.error("Error loading GeoJSON:", error);
+                                });
                
                 var municipalities      = @json($this->getMunicipalities());
                
@@ -466,7 +598,11 @@
                     {
                         geoJsonLayerB.addTo(map);
                     }
-                    bringHeatToFront()
+
+                    if(document.getElementById('showHeatMapButton').checked)
+                    {
+                        bringHeatToFront()
+                    } 
                 }
 
                 function showMunicipality()
@@ -479,7 +615,11 @@
                     {
                         geoJsonLayerMunicipality.addTo(map);
                     }
-                    bringHeatToFront()
+                    
+                   if(document.getElementById('showHeatMapButton').checked)
+                    {
+                        bringHeatToFront()
+                    }
                 }
 
                 function filterByDiseaseType() 
@@ -529,12 +669,25 @@
                     });
                 }
 
+                function showASFZoningMap()
+                {
+                    if(map.hasLayer(ASFGeoJson))
+                    {
+                        ASFGeoJson.removeFrom(map);
+                    }
+                    else{
+                        ASFGeoJson.addTo(map);
+                    }
+                   
+                }
+
                 document.getElementById('showHeatMapButton').addEventListener('click', showDiseaseCaseHeatMap);
                 document.getElementById('showBarangays').addEventListener('click', showBarangays);
                 document.getElementById('filter_year_from').addEventListener('change', filterByDiseaseType);
                 document.getElementById('filter_year_to').addEventListener('change', filterByDiseaseType);
                 document.getElementById('filter_municipality').addEventListener('change', filterByDiseaseType);
                 document.getElementById('showMunicipality').addEventListener('change', showMunicipality);
+                document.getElementById('showASFZoning').addEventListener('click', showASFZoningMap);
                 
                 document.querySelectorAll('.single-checkbox').forEach(cb => {
                     cb.addEventListener('change', function () 

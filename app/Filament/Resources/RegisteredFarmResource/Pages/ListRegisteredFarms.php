@@ -14,7 +14,8 @@ class ListRegisteredFarms extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label("Register a Farm"),
+                ->icon("heroicon-s-document-plus")
+                ->label("Add Farm"),
         ];
     }
 }

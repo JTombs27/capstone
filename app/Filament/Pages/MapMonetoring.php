@@ -3,22 +3,23 @@
 namespace App\Filament\Pages;
 
 use App\Models\Animal;
+use Livewire\Component;
 use App\Models\Barangay;
 use App\Models\Helpline;
 use Filament\Pages\Page;
+use App\Models\ASFZoning;
 use Livewire\Attributes\On;
 use App\Models\Municipality;
+use App\Services\SmsService;
 use App\Models\RegisteredFarm;
+use App\Models\SMSNotification;
+use PhpParser\Node\Stmt\TryCatch;
 use Filament\Pages\Actions\Action;
 use App\Filament\Widgets\DiseaseInfo;
 use App\Filament\Widgets\StatsOverview;
 use App\Filament\Widgets\BlogPostsChart;
 use Filament\Notifications\Notification;
 use App\Filament\Resources\HelplineResource\Widgets\MonitoringStats;
-use App\Models\SMSNotification;
-use App\Services\SmsService;
-use PhpParser\Node\Stmt\TryCatch;
-use Livewire\Component;
 
 class MapMonetoring extends Page
 {
@@ -34,6 +35,14 @@ class MapMonetoring extends Page
     public $selectedDisease = [];
     public $registeredFarms = [];
     public $municipalities  = [];
+
+    public function getASFZoning()
+    {
+
+        $data = ASFZoning::with('municipality')->get();
+        return $data;
+    }
+
     protected function getListeners(): array
     {
 
@@ -206,7 +215,7 @@ class MapMonetoring extends Page
     {
 
         $data = RegisteredFarm::with('animal')->get()->each(function ($item) {
-        $item->animal_name = $item->animal->animal_name;
+            $item->animal_name = $item->animal->animal_name;
         });
         return $data;
     }
@@ -214,8 +223,8 @@ class MapMonetoring extends Page
     public function getDiseaseMonitored($year_from, $year_to)
     {
         $data = Helpline::with(["disease", "animal", "municipal", "barangay"])->where("status", "Monitored")
-        ->whereYear('date_reported', '>=', $year_from)
-        ->whereYear('date_reported', '<=', $year_to)->get();
+            ->whereYear('date_reported', '>=', $year_from)
+            ->whereYear('date_reported', '<=', $year_to)->get();
 
         return $data;
     }

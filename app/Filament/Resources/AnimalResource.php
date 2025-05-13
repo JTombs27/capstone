@@ -22,7 +22,7 @@ class AnimalResource extends Resource
 
     protected static ?string $navigationIcon  = 'icon-animals';
     protected static ?string $navigationGroup = "UTILITIES";
-    protected static ?string $navigationLabel = "Serve Animals";
+    protected static ?string $navigationLabel = "Animal Types";
     public static function form(Form $form): Form
     {
         return $form

@@ -1,184 +1,135 @@
 
+@php
+    $currentYear = date('Y');
+    $years = range($currentYear, 1900);
+    
+@endphp
 <div class="grid grid-cols-12 mt-5 gap-2 p-1">
-     <div class="md:col-span-8 lg:col-span-8 col-span-12 grid grid-cols-12 gap-2">
-        <div class="col-span-12 gap-y-2">
-            @livewire(\App\Filament\Widgets\StatsOverview::class)
-            
-            @livewire(\App\Filament\Widgets\BlogPostsChart::class)
-
-            @livewire(\App\Filament\Widgets\diseaseChart::class)
+     <div class="md:col-span-9 lg:col-span-9 col-span-12 grid grid-cols-12 gap-2">
+        <div class="bg-white border  p-4 rounded-lg shadow-md grid grid-cols-12  gap-x-2 col-span-12" style="font-size: 12px;">
+            <div class="col-span-1 pt-2">
+                <label><b>Filter</b></label>
+            </div>
+            <div class="col-span-1 pt-2 text-right">
+                <label>From :</label>
+            </div>
+            <div class="col-span-2">
+                <select id="filter_year_from" wire:model="filter_year_from"  class="border-gray-300 rounded px-2 py-1 flext-items w-full" style="font-size: 12px;">
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-span-1 pt-2 text-right">
+                <label>To :</label>
+            </div>
+            <div class="col-span-2">
+                <select id="filter_year_to" wire:model="filter_year_to" class="border-gray-300 rounded px-2 py-1 flext-items w-full" style="font-size: 12px;">
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        
+        <div class="bg-white border  p-4 rounded-lg shadow-md grid grid-cols-12  gap-x-2 col-span-12">
+            <div class="col-span-12">
+                <div id="chart" style="width: 100% !important; height: 340px;"></div>
+            </div>
         </div>
      </div>
-    <div class="md:col-span-4 lg:col-span-4 col-span-12 ">
-        <div class=" p-4 bg-slate-900 grid grid-cols-2" style="border-radius: 10px 10px 0px 0px;">
-            <label class="font-bold text-gray-700 text-white col-span-1">ASF ZONE STATUS</label>
-            <div class="col-span-1 text-right">
-                     <button type="submit"  wire:click="openModalZone" style="" class="border rounded px-2  text-purple-600 hover:border-transparent hover:bg-purple-600 hover:text-white active:bg-purple-700">
-                        <small style="font-size: 12px !important;">Manage</small>
-                    </button>
-            </div>
-        </div>
-        <div class="shadow bg-slate-900 z-10" wire:ignore  id="map2" style="height: 350px; width: 100%;"></div>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-            <script>
-                    document.addEventListener('DOMContentLoaded', function () 
-                    {
-                        
-                         let iframe = document.getElementById("crystalReportViewer");
-                         iframe.style.height = window.innerHeight * 0.8 + "px"; // 80% of viewport
-                        //google streets 'http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}' 
-                        var googleStreets2 = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}',{
-                            maxZoom: 9,
-                            minZoom: 9,  
-                            subdomains:['mt0','mt1','mt2','mt3']
-                        });
+     <div class="md:col-span-3 lg:col-span-3 col-span-12 grid grid-cols-12 gap-2">
+        <div class="col-span-12"> @livewire(\App\Filament\Widgets\StatsOverview::class)</div>
+     </div>
+     <div class="col-span-12 gap-y-2 grid grid-cols-12 gap-2">
+        <div class="col-span-6">@livewire(\App\Filament\Widgets\BlogPostsChart::class)</div>
+        <div class="col-span-6">@livewire(\App\Filament\Widgets\diseaseChart::class)</div>
+      
 
-                        var map2 = L.map('map2', {
-                            center: [7.542,126.16],
-                            zoom: 9,
-                            layers: [googleStreets2]
-                        });
-                        var municipalities = @json($this->getMunicipalities());
-                        
-                        var geoJsonLayerMunicipality;
-                        var currentOpacity = 1;//document.getElementById('opacityInput').value;
-                        fetch('/geoJson/MunicipalBoundary.json')
-                                .then(response => response.json())
-                                .then(geojsonData => {
-                                    const blinkingBarangay = "Casoon"; 
-                                    let currentIndex = 0;
-                                    const Municipalcolors = ["red","transparent"];
-                                    geoJsonLayerMunicipality = L.geoJSON(geojsonData, {
-                                        style: function (feature) 
-                                        {
-                                            var municipality = municipalities.find(m =>  m.municipality.municipality_name.toLowerCase() == feature.properties.MUN.toLowerCase());
-                                            var color = municipality ? municipality.color_code : 'orange';
-                                            
-                                            return { color: 'white',
-                                                stroke:true, 
-                                                weight: 2, 
-                                                fillOpacity:currentOpacity,
-                                                fillColor:color,
-                                                fillOpacity:1};
-                                        },
-                                        onEachFeature: function (feature, layer) {
-                                            if (feature.properties && feature.properties.MUN) 
-                                            {
-                                            
-                                                 let municipality = municipalities.find(m => 
-                                                    m.municipality.municipality_name.toLowerCase() === feature.properties.MUN.toLowerCase()
-                                                );
-
-                                                let color = municipality ? municipality.color_code : 'orange';
-
-                                                // If the municipality's fillColor is red, add it to blinkingLayers
-                                                if (color === "red") {
-                                                    layer.blink = true;
-                                                }
-                                                // if(feature.properties.MUN.toLowerCase() == "new bataan" || feature.properties.MUN.toLowerCase() == "maco")
-                                                // {
-                                                //     layer.blink = true;
-                                                // }
-
-                                                layer.bindPopup("Name: " + feature.properties.MUN,{
-                                                            permanent: false,
-                                                            direction: 'top',
-                                                        });
-                                                // Handle click on the polygon
-                                                    layer.on('dblclick', function (e) {
-                                                        // Get the clicked coordinates
-                                                        const clickedCoordinates = e.latlng;
-
-                                                        // Trigger the map's click handler manually
-                                                        map.fire('dblclick', {
-                                                            latlng: clickedCoordinates,
-                                                            layerPoint: e.layerPoint,
-                                                            containerPoint: e.containerPoint,
-                                                            originalEvent: e.originalEvent
-                                                        });
-
-                                                        // Optional: Prevent propagation to other events
-                                                        L.DomEvent.stopPropagation(e);
-                                                    });
-
-                                                // Mouseover event: Highlight the polygon and show details
-                                                    layer.on('mouseover', function (e) {
-                                                        // Highlight the polygon
-                                                        e.target.setStyle({
-                                                            color: 'blue',
-                                                            weight: 1,
-                                                            fillOpacity: 0.5,
-                                                        });
-
-                                                        // Show details in a tooltip
-                                                        layer.bindTooltip("Municipality: " + feature.properties.MUN, {
-                                                            permanent: false,
-                                                            direction: 'top',
-                                                        }).openTooltip(e.latlng);
-
-                                                    });
-
-                                                    // Mouseout event: Reset the style and remove details
-                                                    layer.on('mouseout', function (e) {
-                                                        // Reset the style to default
-                                                        geoJsonLayerMunicipality.resetStyle(e.target);
-
-                                                        // Remove the tooltip
-                                                        e.target.closeTooltip();
-                                                    });
-                                            }
-                                        }
-                                    }).addTo(map2);
-
-                                    // Set up the blinking effect
-                                    setInterval(() => {
-                                        currentIndex = (currentIndex + 1) % Municipalcolors.length;
-
-                                        geoJsonLayerMunicipality.eachLayer(layer => {
-                                            // Check if this layer should blink
-                                            if (layer.blink) {
-                                                layer.setStyle({
-                                                    fillColor: Municipalcolors[currentIndex],
-                                                    fillOpacity:1,
-                                                    stroke:true,
-                                                    opacity:1,
-                                                    color:"red"
-                                                });
-                                            }
-                                        });
-                                    }, 500); // Blink every 1 second
-                                })
-                                .catch(error => {
-                                    console.error("Error loading GeoJSON:", error);
-                                });
-                            
-                    });
-        </script>
-        <div class="col-span-12 dashboardx p-[0.5px]">
-              @livewire(\App\Filament\Widgets\municipalASFZoning::class)
-        </div>
+        
     </div>
-    <div class="col-span-12">
 
-        <x-filament::modal id="modalZone" slide-over class="z-[999]" width="5xl" >
-            <x-slot name="heading">
-                ASF Zoning
-            </x-slot>
-            <div class="col-span-12 h-[500px]"> 
-                    <iframe id="crystalReportViewer"  src="http://localhost:60308/CrystalReportMVC/ViewReport?par_value=0"  width="100%" height="100%"></iframe>
-            </div>
+     @push('scripts')
+     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+     <script>
+          var options = {
+                series: [{
+                    name: 'ASF',
+                    data: [4,3,10,9,29,19,22,9,12,7,19,5]
+                },
+                {
+                    name: 'CSF',
+                    data: [19,22,9,12,7,19,38,54,3,10,9,29]
+                },
+                {
+                    name: 'Avian Influenza (AI)/ HPIA',
+                    data: [19,19,38,22,9,12,7,54,3,9,29,10]
+                }
+            ],
+                chart: {
+                    height: 320,
+                    type: 'line',
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                forecastDataPoints: {
+                    count: 7
+                },
+                stroke: {
+                    width: 2,
+                    curve: 'straight'
+                },
+                xaxis: {
+                    // type: 'datetime',
+                    categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                    // tickAmount: 10,
+                    // labels: {
+                    //     formatter: function (value, timestamp, opts) {
+                    //         return opts.dateFormatter(new Date(timestamp), 'dd MMM');
+                    //     }
+                    // }
+                },
+                title: {
+                    text: 'Disease Forecast',
+                    align: 'left',
+                    style: {
+                        fontSize: "16px",
+                        color: '#666'
+                    }
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'dark',
+                        gradientToColors: ['#172554'],
+                        shadeIntensity: 1,
+                        type: 'horizontal',
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100, 100, 100]
+                    },
+                }
+            };
 
-            <form  wire:submit.prevent="save()">
-                 {{ $this->form }}
-                <x-slot name="footer">
-                    <div class="col-span-12 text-right">
-                    <button type="submit"  wire:click="save()" class="px-4 py-2 bg-blue-500 text-white rounded pull-right hover:bg-blue-600">
-                        Save
-                    </button>
-                    </div>
-                </x-slot>
-            </form>
-        </x-filament::modal>
-    </div>
+            var chart;
+
+            window.addEventListener('load', () => {
+                chart = new ApexCharts(document.querySelector("#chart"), options);
+                chart.render();
+
+                // Give it a short delay to ensure layout is stable
+                setTimeout(() => {
+                    chart.resize();
+                }, 500);
+            });
+
+            // Optional: Also resize on window resize
+            window.addEventListener('resize', () => {
+                if (chart) {
+                    chart.resize();
+                }
+            });
+     </script>
+     @endpush
 </div>

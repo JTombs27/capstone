@@ -17,18 +17,28 @@ use App\Filament\Widgets\StatsOverview;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Widgets\BlogPostsChart;
+use Carbon\Carbon;
 use Filament\Forms\Components\{TextInput, Repeater, Select, Section};
-
+use Illuminate\Support\Facades\Date;
 
 class Dashboard extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-home';
     protected static string $view            = 'filament.pages.dashboard';
-    public $formData = [];
+    public $formData                        = [];
+    public $filter_year_from;
+    public $filter_year_to;
+
     protected function getListeners(): array
     {
         return ['openModalZone', 'save'];
+    }
+
+    public function mount()
+    {
+        $this->filter_year_from = 2000;
+        $this->filter_year_to = now()->year; // or Carbon::now()->year
     }
 
     public function openModalZone()

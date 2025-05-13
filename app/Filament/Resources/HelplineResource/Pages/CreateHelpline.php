@@ -7,11 +7,37 @@ use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\HelplineResource;
+use Filament\Actions\Action;
+use Filament\Support\Enums\ActionColor;
+use Filament\Notifications\Notification;
 
 class CreateHelpline extends CreateRecord
 {
     protected static string $resource = HelplineResource::class;
     //public collection $symptoms;
+    protected function getCreateFormAction(): Action
+    {
+        return
+            Action::make('create')
+            ->label('💾 Save') // Label for the default create
+            ->submit('create');
+    }
+    protected function getCreatedNotificationMessage(): ?string
+    {
+        return "Case Report Successfully Added!";
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return   Action::make('createAnother')
+            ->label('📝 Save & Add New') // Custom label here
+            ->action('createAnother')
+            ->extraAttributes([
+                'class' => 'bg-green-600 hover:bg-green-700 text-white', // Customize as needed
+            ]);
+    }
+
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $this->symptoms = array_map(function ($symptom) {

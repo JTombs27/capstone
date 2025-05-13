@@ -3,6 +3,9 @@
 @import './scrollbar.css';
 @config 'tailwind.config.js';
 
+.fi-dropdown-panel {
+    @apply z-50 !important;
+}
 
 .fi-page>section.flex {
     @apply pt-2;

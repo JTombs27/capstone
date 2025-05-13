@@ -14,7 +14,7 @@ class StatsOverview extends BaseWidget
     protected static ?string $pollingInterval = '30s';
     protected function getColumns(): int
     {
-        return 3; // Change this to any number of columns you want
+        return 1; // Change this to any number of columns you want
     }
     protected function getStats(): array
     {
