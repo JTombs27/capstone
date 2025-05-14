@@ -37,17 +37,57 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
     public $forecastResults = [];
     public $predictions     = [];
     public $forcastMonts    = 0;
+    public $diseaseTrends  = [];
+
 
     protected function getListeners(): array
     {
-        return ['openModalZone', 'save'];
+        return ['openModalZone', 'save', 'processForcastingData'];
     }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                Helpline::selectRaw('
+                    diseases.disease_description as disease_name,
+                    YEAR(date_reported) as year,
+                    MONTH(date_reported) as month,
+                    COUNT(*) as case_count
+                ')
+                    ->join('diseases', 'helplines.disease_id', '=', 'diseases.id')
+                    ->whereBetween(DB::raw('YEAR(helplines.date_reported)'), [
+                        $this->filter_year_from,
+                        $this->filter_year_to,
+                    ])
+                    ->groupBy('disease_name', DB::raw('YEAR(date_reported)'), DB::raw('MONTH(date_reported)'))
+                    ->orderBy('disease_name')
+                    ->orderBy('year')
+                    ->orderBy('month')
+            )
+            ->columns([
+                TextColumn::make('disease_name')
+                    ->label('Disease')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('month')
+                    ->label('Month')
+                    ->formatStateUsing(fn($state) => \Carbon\Carbon::create()->month($state)->format('F')),
+                TextColumn::make('year')
+                    ->label('Year'),
+                TextColumn::make('case_count')
+                    ->label('No. of Cases')
+                    ->alignEnd(),
+            ])
+            ->pagination(10);
+    }
+
 
     public function mount()
     {
-        $this->filter_year_from = 2000; 
+        $this->filter_year_from = 2025;
         $this->filter_year_to   = now()->year; // or Carbon::now()->year
-    
+
         $this->historicalData = Helpline::selectRaw('
                                             diseases.disease_description as disease_name,
                                             YEAR(date_reported) as year,
@@ -55,29 +95,54 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
                                             COUNT(*) as case_count,
                                             diseases.id as disease_id
                                         ')
-                                        ->join('diseases', 'helplines.disease_id', '=', 'diseases.id')
-                                        ->groupBy('disease_name','disease_id', DB::raw('YEAR(date_reported)'), DB::raw('MONTH(date_reported)'))
-                                        ->orderBy('disease_name')
-                                        ->orderBy('year')
-                                        ->orderBy('month')
-                                        ->get();
+            ->join('diseases', 'helplines.disease_id', '=', 'diseases.id')
+            ->groupBy('disease_name', 'disease_id', DB::raw('YEAR(date_reported)'), DB::raw('MONTH(date_reported)'))
+            ->orderBy('disease_name')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
         $this->processForcastingData();
-
+        $this->diseaseData();
     }
 
-    public function updated($propertyName)
-{
-    if (in_array($propertyName, ['filter_year_from', 'filter_year_to'])) {
-        $this->processForcastingData();
-
-        // Optional: If you want to notify JS to re-render the chart
-        $this->dispatchBrowserEvent('forecast-updated');
+    public function diseaseData()
+    {
+        $yearFrom   = $this->filter_year_from;
+        $yearto     = $this->filter_year_to;
+        $this->diseaseTrends = Helpline::selectRaw('
+            diseases.disease_description as disease_name,
+            YEAR(date_reported) as year,
+            MONTH(date_reported) as month,
+            COUNT(*) as case_count,
+            diseases.id as disease_id
+        ')
+            ->join('diseases', 'helplines.disease_id', '=', 'diseases.id')
+            ->whereBetween(DB::raw('YEAR(helplines.date_reported)'), [$yearFrom, $yearto])
+            ->groupBy('disease_name', 'disease_id', DB::raw('YEAR(date_reported)'), DB::raw('MONTH(date_reported)'))
+            ->orderBy('disease_name')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
     }
-}
+
+    public function updated($name, $value)
+    {
+        if ($name === 'filter_year_from' || $name === 'filter_year_to') {
+            $this->processForcastingData();
+            $this->diseaseData();
+            $this->dispatch('filter-update', [
+                'municipal_data' => $this->getMunicipalityChartData(),
+                'forecast_data' => $this->forecastResults,
+            ]);
+        }
+    }
+
+    public function onYearChange() {}
+
 
     public function processForcastingData()
     {
-        $currentYear  = $this->filter_year_to;
+        $currentYear  = now()->year;
         $currentMonth = now()->month;
 
         // Determine if forecasting should run
@@ -87,13 +152,11 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
 
         $grouped = $this->historicalData->groupBy('disease_name');
 
-        foreach ($grouped as $disease => $records) 
-        {
+        foreach ($grouped as $disease => $records) {
             $samples = [];
             $targets = [];
 
-            foreach ($records as $record) 
-            {
+            foreach ($records as $record) {
                 $timeStep  = ($record->year * 12) + $record->month;
                 $samples[] = [$timeStep];
                 $targets[] = $record->case_count;
@@ -101,28 +164,27 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
 
             // Skip diseases with less than 2 data points
             if (count($samples) < 2) continue;
-            
+
             $disease_id = $records[0]["disease_id"];
             $regression = new LeastSquares();
             $regression->train($samples, $targets);
             $this->predictions = [];
-            $dataExisting = TempMonth::
-                                    selectRaw(
-                                    '
+            $dataExisting = TempMonth::selectRaw(
+                '
                                         disease_id,
                                         COUNT(helplines.id) as count,
                                         month_name
-                                    ')
-                                    ->leftJoin('helplines',function ($join) use ($currentYear,$disease_id) {
-                                        $join->on(DB::raw('MONTH(helplines.date_reported)'), '=', 'temp_month_tbl.month')
-                                             ->where(DB::raw('YEAR(helplines.date_reported)'), '=', $currentYear)
-                                             ->where('helplines.disease_id', '=', $disease_id); // Optional condition
-                                    })
-                                    ->where("month","<=",$currentMonth)
-                                    ->groupBy('disease_id','month_name')
-                                    ->get();
-            foreach($dataExisting as $x)
-            {
+                                    '
+            )
+                ->leftJoin('helplines', function ($join) use ($currentYear, $disease_id) {
+                    $join->on(DB::raw('MONTH(helplines.date_reported)'), '=', 'temp_month_tbl.month')
+                        ->where(DB::raw('YEAR(helplines.date_reported)'), '=', $currentYear)
+                        ->where('helplines.disease_id', '=', $disease_id); // Optional condition
+                })
+                ->where("month", "<=", $currentMonth)
+                ->groupBy('disease_id', 'month_name')
+                ->get();
+            foreach ($dataExisting as $x) {
                 $this->predictions[] = [
                     'month' => $x->month_name,
                     'value' => $x->count,
@@ -130,10 +192,9 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
             }
             // Forecast only future months in current year
             $startMonth = $this->filter_year_to == $currentYear ? $currentMonth + 1 : 13;
-            if ($startMonth > 12) continue; 
+            if ($startMonth > 12) continue;
 
-            for ($month = $startMonth; $month <= 12; $month++) 
-            {
+            for ($month = $startMonth; $month <= 12; $month++) {
                 $timeStep  = ($currentYear * 12) + $month;
                 $predicted = $regression->predict([$timeStep]);
 
@@ -146,17 +207,39 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
             if (empty($this->predictions)) continue;
 
             $lastActual = $this->predictions[array_key_last($this->predictions)];
-            $trend      = $this->predictions[$startMonth-1]['value'] > $lastActual ? 'Decreasing' : 'Increasing';
+            $trend      = $this->predictions[$startMonth - 1]['value'] > $lastActual ? 'Decreasing' : 'Increasing';
 
-           
+
 
             $this->forecastResults[] = [
                 'disease'  => $disease,
                 'trend'    => $trend,
                 'forecast' => $this->predictions,
-                'forecastDataPoints'=>$startMonth
+                'forecastDataPoints' => $startMonth,
+                'forcastedyear' => $currentYear
             ];
         }
+    }
+
+    public function getMunicipalityChartData()
+    {
+        $yearFrom = $this->filter_year_from;
+        $yearto = $this->filter_year_to;
+        $data = Municipality::selectRaw(
+            '
+                municipalities.municipality_name AS municipality,
+                COUNT(helplines.id)              AS value,
+                municipalities.color             AS color
+            '
+        )
+            ->leftJoin("helplines", function ($join) use ($yearFrom, $yearto) {
+                $join->on("helplines.query_municipality", "municipalities.id")
+                    ->whereBetween(DB::raw('YEAR(helplines.date_reported)'), [$yearFrom, $yearto]);
+            })
+            ->groupBy('municipality', 'color')
+            ->orderBy('municipality')
+            ->get();
+        return $data;
     }
 
 

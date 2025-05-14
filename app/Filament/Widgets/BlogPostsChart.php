@@ -11,10 +11,22 @@ class BlogPostsChart extends ChartWidget
     protected static ?string $heading = 'Helpline Report Chart';
     protected static ?int $sort = 2;
 
-    public ?int $filter_year_from = null;
-    public ?int $filter_year_to = null;
+    public ?int $filter_year_from   = null;
+    public ?int $filter_year_to     = null;
 
     protected static ?string $maxHeight = "255px";
+    protected function getListeners(): array
+    {
+        return [
+            'updateYearRange' => '$refresh',
+            'yearUpdated' => 'updateYear'
+        ];
+    }
+    public function updateYear($year)
+    {
+        $this->filter_year_from  = $year;
+        // Use $this->year to filter your data
+    }
 
     protected function getData(): array
     {
@@ -59,12 +71,5 @@ class BlogPostsChart extends ChartWidget
     public static function canView(): bool
     {
         return true; // Required for dynamic property updates
-    }
-
-    protected function getListeners(): array
-    {
-        return [
-            'updateYearRange' => '$refresh',
-        ];
     }
 }
