@@ -1,39 +1,47 @@
-<div>
-@livewire(\App\Filament\Widgets\diseaseChart::class)
-    <canvas id="diseaseBarChart" width="400" height="200"></canvas>
+<div class="col-span-12">
+    <h1>TESTING</h1>
+
+    <div
+        x-data="{
+            chart: null,
+            initChart() {
+                if (this.chart) return; // Prevent duplicate rendering
+
+                const options = {
+                    chart: {
+                        type: 'bar',
+                        height: 300
+                    },
+                    series: [{
+                        name: 'Report Cases',
+                        data: [5, 2, 6, 8] 
+                    }],
+                    xaxis: {
+                        categories: ['Mun A', 'Mun B', 'Mun C', 'Mun D'] 
+                    },
+                    title: {
+                        text: 'Helpline Reported Cases by Municipality',
+                        align: 'left',
+                        style: {
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            color: '#263238'
+                        }
+                    }
+                };
+
+                this.chart = new ApexCharts(this.$refs.chart, options);
+                this.chart.render();
+            }
+        }"
+        x-init="initChart()"
+    >
+        <div x-ref="chart" style="width: 100%; height: 340px;"></div>
+    </div>
 </div>
 
 @once
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    @endpush
 @endonce
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('diseaseBarChart');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        
-        const chartData = {
-            labels: ['Flu', 'Infection', 'Fever'],  // Example labels
-            datasets: [{
-                label: 'Disease Reports',
-                data: [5, 10, 3],  // Example data
-                backgroundColor: '#3B82F6',
-            }]
-        };
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: chartData,
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    });
-</script>
