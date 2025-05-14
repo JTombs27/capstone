@@ -36,6 +36,10 @@ class CreateHelpline extends CreateRecord
                 'class' => 'bg-green-600 hover:bg-green-700 text-white', // Customize as needed
             ]);
     }
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
 
 
     protected function mutateFormDataBeforeCreate(array $data): array

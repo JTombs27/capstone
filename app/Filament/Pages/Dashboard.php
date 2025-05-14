@@ -17,9 +17,13 @@ use App\Filament\Widgets\StatsOverview;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use App\Filament\Widgets\BlogPostsChart;
+use App\Models\Helpline;
+use App\Models\TempMonth;
 use Carbon\Carbon;
 use Filament\Forms\Components\{TextInput, Repeater, Select, Section};
 use Illuminate\Support\Facades\Date;
+use Phpml\Regression\LeastSquares;
+
 
 class Dashboard extends Page implements Forms\Contracts\HasForms
 {
@@ -29,6 +33,10 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
     public $formData                        = [];
     public $filter_year_from;
     public $filter_year_to;
+    public $historicalData;
+    public $forecastResults = [];
+    public $predictions     = [];
+    public $forcastMonts    = 0;
 
     protected function getListeners(): array
     {
@@ -37,9 +45,120 @@ class Dashboard extends Page implements Forms\Contracts\HasForms
 
     public function mount()
     {
-        $this->filter_year_from = 2000;
-        $this->filter_year_to = now()->year; // or Carbon::now()->year
+        $this->filter_year_from = 2000; 
+        $this->filter_year_to   = now()->year; // or Carbon::now()->year
+    
+        $this->historicalData = Helpline::selectRaw('
+                                            diseases.disease_description as disease_name,
+                                            YEAR(date_reported) as year,
+                                            MONTH(date_reported) as month,
+                                            COUNT(*) as case_count,
+                                            diseases.id as disease_id
+                                        ')
+                                        ->join('diseases', 'helplines.disease_id', '=', 'diseases.id')
+                                        ->groupBy('disease_name','disease_id', DB::raw('YEAR(date_reported)'), DB::raw('MONTH(date_reported)'))
+                                        ->orderBy('disease_name')
+                                        ->orderBy('year')
+                                        ->orderBy('month')
+                                        ->get();
+        $this->processForcastingData();
+
     }
+
+    public function updated($propertyName)
+{
+    if (in_array($propertyName, ['filter_year_from', 'filter_year_to'])) {
+        $this->processForcastingData();
+
+        // Optional: If you want to notify JS to re-render the chart
+        $this->dispatchBrowserEvent('forecast-updated');
+    }
+}
+
+    public function processForcastingData()
+    {
+        $currentYear  = $this->filter_year_to;
+        $currentMonth = now()->month;
+
+        // Determine if forecasting should run
+        // if ($this->filter_year_to < $currentYear) {
+        //     return;
+        // }
+
+        $grouped = $this->historicalData->groupBy('disease_name');
+
+        foreach ($grouped as $disease => $records) 
+        {
+            $samples = [];
+            $targets = [];
+
+            foreach ($records as $record) 
+            {
+                $timeStep  = ($record->year * 12) + $record->month;
+                $samples[] = [$timeStep];
+                $targets[] = $record->case_count;
+            }
+
+            // Skip diseases with less than 2 data points
+            if (count($samples) < 2) continue;
+            
+            $disease_id = $records[0]["disease_id"];
+            $regression = new LeastSquares();
+            $regression->train($samples, $targets);
+            $this->predictions = [];
+            $dataExisting = TempMonth::
+                                    selectRaw(
+                                    '
+                                        disease_id,
+                                        COUNT(helplines.id) as count,
+                                        month_name
+                                    ')
+                                    ->leftJoin('helplines',function ($join) use ($currentYear,$disease_id) {
+                                        $join->on(DB::raw('MONTH(helplines.date_reported)'), '=', 'temp_month_tbl.month')
+                                             ->where(DB::raw('YEAR(helplines.date_reported)'), '=', $currentYear)
+                                             ->where('helplines.disease_id', '=', $disease_id); // Optional condition
+                                    })
+                                    ->where("month","<=",$currentMonth)
+                                    ->groupBy('disease_id','month_name')
+                                    ->get();
+            foreach($dataExisting as $x)
+            {
+                $this->predictions[] = [
+                    'month' => $x->month_name,
+                    'value' => $x->count,
+                ];
+            }
+            // Forecast only future months in current year
+            $startMonth = $this->filter_year_to == $currentYear ? $currentMonth + 1 : 13;
+            if ($startMonth > 12) continue; 
+
+            for ($month = $startMonth; $month <= 12; $month++) 
+            {
+                $timeStep  = ($currentYear * 12) + $month;
+                $predicted = $regression->predict([$timeStep]);
+
+                $this->predictions[] = [
+                    'month' => Carbon::createFromDate($currentYear, $month, 1)->format('F'),
+                    'value' => round($predicted),
+                ];
+            }
+
+            if (empty($this->predictions)) continue;
+
+            $lastActual = $this->predictions[array_key_last($this->predictions)];
+            $trend      = $this->predictions[$startMonth-1]['value'] > $lastActual ? 'Decreasing' : 'Increasing';
+
+           
+
+            $this->forecastResults[] = [
+                'disease'  => $disease,
+                'trend'    => $trend,
+                'forecast' => $this->predictions,
+                'forecastDataPoints'=>$startMonth
+            ];
+        }
+    }
+
 
     public function openModalZone()
     {

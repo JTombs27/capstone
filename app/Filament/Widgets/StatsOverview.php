@@ -18,7 +18,7 @@ class StatsOverview extends BaseWidget
     }
     protected function getStats(): array
     {
-        $smsService = new SmsService();
+        $smsService      = new SmsService();
         $balanceResponse = $smsService->getBalance();
 
         // Ensure the response is an array and contains "credit_balance"
@@ -40,7 +40,7 @@ class StatsOverview extends BaseWidget
         }
 
         $helpLineTotal      = Helpline::count();
-        $positivePercent    = Helpline::where("status", "Positive")->orWhere("status", "Monitored")->count();
+        $positivePercent    = Helpline::where("positive_count",">","0")->count();
         $positivePercentC    = ($positivePercent / $helpLineTotal) * 100;
         $formated           = number_format($positivePercentC, 2);
         return [

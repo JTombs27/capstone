@@ -2,37 +2,49 @@
 
 namespace App\Filament\Widgets;
 
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use App\Models\Municipality;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Facades\DB;
 
 class BlogPostsChart extends ChartWidget
 {
-    protected static ?string $heading   = 'Helpline Report Chart';
-    protected static ?int $sort         = 2;
+    protected static ?string $heading = 'Helpline Report Chart';
+    protected static ?int $sort = 2;
+
+    public ?int $filter_year_from = null;
+    public ?int $filter_year_to = null;
+
+    protected static ?string $maxHeight = "255px";
+
     protected function getData(): array
     {
-        $municipalities = Municipality::orderBy('municipality_name')->pluck('municipality_name')->toArray();
-        $bgColor = Municipality::orderBy('municipality_name')
-            ->pluck('color')
+        $query = Municipality::orderBy('municipality_name');
+
+        $municipalities = $query->pluck('municipality_name')->toArray();
+
+        $bgColor = $query->pluck('color')
             ->map(fn($color) => strtolower($color))
             ->toArray();
-        $helpLineCounts = Municipality::leftJoin('helplines', 'municipalities.id', '=', 'helplines.query_municipality')
-            ->select(DB::raw('COUNT(helplines.id) as help_line_count'))
+
+        $helpLineCountsQuery = Municipality::leftJoin('helplines', 'municipalities.id', '=', 'helplines.query_municipality')
+            ->select('municipalities.id', DB::raw('COUNT(helplines.id) as help_line_count'))
             ->groupBy('municipalities.id')
-            ->orderBy('municipalities.municipality_name')
-            ->pluck('help_line_count')
-            ->toArray();
+            ->orderBy('municipalities.municipality_name');
+
+        if ($this->filter_year_from && $this->filter_year_to) {
+            $helpLineCountsQuery->whereBetween(DB::raw('YEAR(helplines.created_at)'), [$this->filter_year_from, $this->filter_year_to]);
+        }
+
+        $helpLineCounts = $helpLineCountsQuery->pluck('help_line_count')->toArray();
+
         return [
             'datasets' => [
                 [
                     'label' => 'Report Cases',
-                    'data' =>  $helpLineCounts,
+                    'data' => $helpLineCounts,
                     'fill' => true,
                     'backgroundColor' => $bgColor,
                     'borderColor' => $bgColor,
-                    //'tension' => 0.4,
                 ],
             ],
             'labels' => $municipalities,
@@ -44,5 +56,15 @@ class BlogPostsChart extends ChartWidget
         return 'bar';
     }
 
-    protected static ?string $maxHeight = "255px";
+    public static function canView(): bool
+    {
+        return true; // Required for dynamic property updates
+    }
+
+    protected function getListeners(): array
+    {
+        return [
+            'updateYearRange' => '$refresh',
+        ];
+    }
 }

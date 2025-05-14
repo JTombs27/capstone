@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class SmsService
 {
@@ -36,10 +38,15 @@ class SmsService
 
     public function getBalance()
     {
-        $response = Http::timeout(30)->get('https://api.semaphore.co/api/v4/account', [
-            'apikey' => $this->apiKey,
-        ]);
-
-        return $response->json();
+        try {
+            $response = Http::timeout(30)->get('https://api.semaphore.co/api/v4/account', [
+                'apikey' => $this->apiKey,
+            ]);
+    
+            return $response->json();
+        } catch (Exception $e) {
+            Log::error('Error fetching balance: ' . $e->getMessage());
+            return ['error' => 'Failed to retrieve balance'];
+        }
     }
 }
