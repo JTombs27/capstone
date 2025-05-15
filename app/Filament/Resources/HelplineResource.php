@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use DateTime;
 use livewire;
 use Filament\Forms;
 use Filament\Tables;
@@ -20,12 +21,14 @@ use Filament\Resources\Resource;
 use Dotswan\MapPicker\Fields\Map;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\View;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Select;
 use Filament\Support\Enums\Alignment;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Livewire\Livewire as LivewireMount;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
@@ -35,13 +38,11 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\DateTimePicker;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 use App\Filament\Resources\HelplineResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\HelplineResource\RelationManagers;
-use DateTime;
-use Filament\Forms\Components\DateTimePicker;
-use Livewire\Livewire as LivewireMount;
 
 
 class HelplineResource extends Resource
@@ -381,16 +382,16 @@ class HelplineResource extends Resource
                 Tables\Columns\TextColumn::make('disease.disease_description')
                     ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->label("Disease")
-                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease'.$record->other_info)
+                    ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease' . $record->other_info)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('helplineSymptoms.Symptomx.symptom_descr')
-                    ->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
+                    //->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
                     ->label("Reported Symptoms")
                     ->searchable()
                     ->listWithLineBreaks()
                     ->limitList(2)
-                    ->expandableLimitedList()
-                    //->bulleted()
+                    ->expandableLimitedList(true)
+                    ->bulleted()
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('status')
@@ -705,45 +706,93 @@ class HelplineResource extends Resource
                     Action::make("set_disease")
                         ->label("Set Disease")
                         ->icon("heroicon-s-exclamation-triangle")
-                        ->form([
-                            // Dynamically load diseases based on the animal_id
-                            Select::make('help_disease')
-                                ->label("Select Disease")
-                                ->options(function ($get, $record) {
-                                    // Get the animal_id from the current record
-                                    $animalId = $record->animal_id;
+                        ->form(
+                            function ($record) {
+                                return [
+                                    // Dynamically load diseases based on the animal_id
+                                    Section::make()
+                                        ->schema([
+                                            Select::make('help_disease')
+                                                ->label("Select Disease")
+                                                ->options(function ($get, $record) {
+                                                    // Get the animal_id from the current record
+                                                    $animalId = $record->animal_id;
 
-                                    // Fetch diseases based on the animal_id
-                                    return Disease::where("animal_id", $animalId)
-                                        ->pluck('disease_description', 'id')
-                                        ->toArray();
-                                })
-                        ])
-                        ->modalContent(function ($record) {
-                            $diseases = Disease::where('animal_id', $record->animal_id)
+                                                    // Fetch diseases based on the animal_id
+                                                    return Disease::where("animal_id", $animalId)
+                                                        ->pluck('disease_description', 'id')
+                                                        ->toArray();
+                                                })
+                                                ->columnSpanFull()
+                                                ->default($record->diseas_id),
+                                            TextInput::make("sample_count")
+                                                ->label("Sample Count")
+                                                ->default($record->sample_count)
+                                                ->columnSpan(6),
 
-                                ->get();
+                                            TextInput::make("positive_count")
+                                                ->label("Positive Count")
+                                                ->default($record->positive_count)
+                                                ->columnSpan(6),
+                                        ])
+                                        ->columns(12)
 
-                            $chartData = [
-                                'labels' => ["tesst", "test2", "test3"],
-                                'datasets' => [[
-                                    'label' => 'Disease Reports',
-                                    'data' => [2, 10, 11],
-                                    'backgroundColor' => '#3B82F6',
-                                ]]
-                            ];
-
-                            return view('filament.modals.disease-bar-chart', [
-                                'chartData' => $chartData,
-                            ]);
-                        })
-
+                                ];
+                            }
+                        )
                         ->modalWidth("md")
+                         ->modalContent(function($record)
+                         {
+                            $helplineSymptomIds = DB::table('helpline_symptoms')
+                                    ->where('helpline_id', $record->id)
+                                    ->pluck('symptom_id')
+                                    ->toArray();
+                                
+                                if (empty($helplineSymptomIds)) 
+                                {
+                                    // No symptoms found for this helpline, return empty result
+                                    $diseases = null;
+                                }
+                                else{
+
+                               
+                                // Quote the values properly for raw query
+                                $quotedIds = implode(',', array_map('intval', $helplineSymptomIds));
+                                
+                                $diseases = DB::table('diseases')
+                                    ->join('disease_symptoms', 'diseases.id', '=', 'disease_symptoms.disease_id')
+                                    ->select(
+                                        'diseases.id',
+                                        'diseases.disease_description',
+                                        DB::raw("COUNT(CASE WHEN disease_symptoms.symptom_id IN ($quotedIds) THEN 1 END) as match_count"),
+                                        DB::raw('COUNT(disease_symptoms.symptom_id) as total_symptoms')
+                                    )
+                                    ->groupBy('diseases.id', 'diseases.disease_description')
+                                    ->get()
+                                    ->map(function ($disease) {
+                                        $percentage = $disease->total_symptoms > 0
+                                            ? round(($disease->match_count / $disease->total_symptoms) * 100)
+                                            : 0;
+                                        return [
+                                            'name' => $disease->disease_description,
+                                            'percentage' => $percentage . '%',
+                                        ];
+                                    })
+                                    ->sortByDesc('percentage')
+                                    ->take(3)
+                                    ->values();
+                                }
+
+                            return view('filament.modals.disease-bar-chart',['details' => $diseases]);
+                         })
                         ->action(function (array $data, $record) {
                             // Update the record with the selected disease
                             $record->disease_id = $data["help_disease"];
+                            $record->sample_count = $data["sample_count"];
+                            $record->positive_count = $data["positive_count"];
                             $record->save();
-                        }),
+                        })
+                        ->successNotificationTitle('Successfully Updated Disease'),
                     Action::make('unset_disease')
                         ->label("Unset Disease")
                         ->icon("heroicon-s-arrow-uturn-right")

@@ -11,6 +11,17 @@ use App\Filament\Resources\HelplineResource;
 class EditHelpline extends EditRecord
 {
     protected static string $resource = HelplineResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+    }
+
+    protected function getSavedNotificationMessage(): ?string
+    {
+        return "Case Report Successfully Updated!";
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $this->symptoms = array_map(function ($symptom) {
