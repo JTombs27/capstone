@@ -24,7 +24,7 @@
                 <label>To :</label>
             </div>
             <div class="col-span-2">
-                <select id="filter_year_to" wire:model="filter_year_to" class="border-gray-300 rounded px-2 py-1 flext-items w-full" style="font-size: 12px;">
+                <select id="filter_year_to" onchange="RenderForcasting()" wire:model="filter_year_to" class="border-gray-300 rounded px-2 py-1 flext-items w-full" style="font-size: 12px;">
                     @foreach ($years as $year)
                         <option value="{{ $year }}">{{ $year }}</option>
                     @endforeach
