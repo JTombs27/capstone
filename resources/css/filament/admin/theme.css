@@ -11,7 +11,6 @@
     @apply pt-2;
 }
 
-/* Add blinking effect to the SVG */
 .blinking-svg {
     animation: blinkRed 0.5s infinite alternate;
 }
@@ -24,78 +23,57 @@
     animation: blinkYellow 0.5s infinite alternate;
 }
 
-/* Keyframe animation to blink color */
 @keyframes blinkRed {
     0% {
         fill: red;
-        /* Start with red */
     }
 
     50% {
         fill: currentColor;
-        /* Back to the original color */
     }
 
     100% {
         fill: red;
-        /* End with red */
     }
 }
 
-/* Keyframe animation to blink color */
 @keyframes blinkPink {
     0% {
         fill: pink;
-        /* Start with red */
     }
 
     50% {
         fill: currentColor;
-        /* Back to the original color */
     }
 
     100% {
         fill: pink;
-        /* End with red */
     }
 }
 
-/* Keyframe animation to blink color */
 @keyframes blinkYellow {
     0% {
         fill: yellow;
-        /* Start with red */
     }
 
     50% {
         fill: currentColor;
-        /* Back to the original color */
     }
 
     100% {
         fill: yellow;
-        /* End with red */
     }
 }
 
 .fi-layout {
 
-    /* @apply dark:bg-gradient-to-br dark:from-yellow-950/90 from-30% dark:via-yellow-800/80 dark:to-yellow-500/100 dark:to-60%;
-    @apply bg-gradient-to-br from-yellow-500/90 from-30% via-yellow-800/80 to-yellow-950/100 to-60%; */
+
     @apply bg-white;
     @apply dark:bg-gray-600;
 
 }
 
-/* .fi-sidebar-header, */
 .fi-sidebar {
-    /* background: white;
-    border-right: 1px solid #E4E4E5; */
-
-    /* @apply dark:bg-gradient-to-b from-blue-800  to-red-700;
-    @apply bg-gradient-to-t from-blue-800 to-red-700 ; */
-
-    /* @apply bg-custom-color-sidebar; */
     @apply bg-slate-800;
     @apply dark:bg-slate-800;
 }
@@ -201,7 +179,6 @@ ul.fi-sidebar-nav-groups {
 
 .fi-header-heading {
     @apply text-gray-600;
-    /* @apply uppercase; */
 
 }
 
@@ -229,9 +206,7 @@ button.fi-link::before {
 
 .fi-ta-table,
 .fi-ta-table>tbody,
-.fi-ta-table>thead {
-    /* @apply divide-white/5; */
-}
+.fi-ta-table>thead {}
 
 .fi-ta-row {
     @apply hover:dark:bg-white/5 !important;
@@ -318,7 +293,6 @@ button.fi-link::before {
 }
 
 
-/* pagination classes  */
 .fi-pagination-overview {
     @apply text-gray-200;
 }
@@ -369,10 +343,6 @@ button.fi-link::before {
     @apply text-gray-300;
 }
 
-/* end Pagination class */
-/* ------------------------------------------------------------------------------------------------- */
-
-/* badge classes */
 
 .fi-badge.fi-color-custom {
     @apply bg-custom-400/10;

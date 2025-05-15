@@ -364,6 +364,7 @@ class HelplineResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('municipal.municipality_name')
                     ->label("📍 Address Location")
@@ -378,19 +379,19 @@ class HelplineResource extends Resource
                 Tables\Columns\TextColumn::make('animal.animal_name')
                     ->label(new HtmlString("Animal"))
                     ->extraCellAttributes(['class' => 'dictionary-cell'])
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('disease.disease_description')
                     ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->label("Disease")
                     ->getStateUsing(fn($record) => $record->disease->disease_description ?? 'Unverified Disease' . $record->other_info)
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('helplineSymptoms.Symptomx.symptom_descr')
-                    //->extraCellAttributes(['class' => 'dictionary-cell', 'style' => 'width: 25%;'])
+                    ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->label("Reported Symptoms")
                     ->searchable()
-                    ->listWithLineBreaks()
-                    ->limitList(2)
-                    ->expandableLimitedList(true)
+                    ->expandableLimitedList()
                     ->bulleted()
                     ->wrap(),
 
@@ -741,24 +742,21 @@ class HelplineResource extends Resource
                             }
                         )
                         ->modalWidth("md")
-                         ->modalContent(function($record)
-                         {
+                        ->modalContent(function ($record) {
                             $helplineSymptomIds = DB::table('helpline_symptoms')
-                                    ->where('helpline_id', $record->id)
-                                    ->pluck('symptom_id')
-                                    ->toArray();
-                                
-                                if (empty($helplineSymptomIds)) 
-                                {
-                                    // No symptoms found for this helpline, return empty result
-                                    $diseases = null;
-                                }
-                                else{
+                                ->where('helpline_id', $record->id)
+                                ->pluck('symptom_id')
+                                ->toArray();
 
-                               
+                            if (empty($helplineSymptomIds)) {
+                                // No symptoms found for this helpline, return empty result
+                                $diseases = null;
+                            } else {
+
+
                                 // Quote the values properly for raw query
                                 $quotedIds = implode(',', array_map('intval', $helplineSymptomIds));
-                                
+
                                 $diseases = DB::table('diseases')
                                     ->join('disease_symptoms', 'diseases.id', '=', 'disease_symptoms.disease_id')
                                     ->select(
@@ -781,10 +779,10 @@ class HelplineResource extends Resource
                                     ->sortByDesc('percentage')
                                     ->take(3)
                                     ->values();
-                                }
+                            }
 
-                            return view('filament.modals.disease-bar-chart',['details' => $diseases]);
-                         })
+                            return view('filament.modals.disease-bar-chart', ['details' => $diseases]);
+                        })
                         ->action(function (array $data, $record) {
                             // Update the record with the selected disease
                             $record->disease_id = $data["help_disease"];

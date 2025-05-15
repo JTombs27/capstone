@@ -110,6 +110,7 @@ class DiseaseResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('disease_description')
                     ->description(fn($record): string => $record->disease_type)
@@ -136,7 +137,6 @@ class DiseaseResource extends Resource
                     ->searchable()
                     ->extraCellAttributes(['class' => 'dictionary-cell'])
                     ->wrap(),
-
 
             ])
             ->filters([
@@ -167,7 +167,7 @@ class DiseaseResource extends Resource
                     ->slideOver()
                     ->modalAlignment(Alignment::Center),
                 Tables\Actions\DeleteAction::make()
-                    ->label(""),
+                    ->label("")
             ])
         ;
         // ->bulkActions([
